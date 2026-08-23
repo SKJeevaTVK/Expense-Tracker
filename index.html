@@ -16,7 +16,6 @@
         
         .header-actions { display: flex; gap: 8px; }
         .btn-sm { width: auto; padding: 6px 12px; margin: 0; font-size: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
-        .btn-lang { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
         .btn-logout { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
 
         .card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37); }
@@ -30,10 +29,8 @@
         button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
         .btn-nav { background: linear-gradient(135deg, #0284c7, #0369a1); font-size: 15px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-home { background: linear-gradient(135deg, #059669, #047857); margin-bottom: 15px; }
-        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .btn-export { background: linear-gradient(135deg, #10b981, #059669); margin-top: 10px; }
         
-        .auth-toggle { text-align: center; font-size: 13px; color: #38bdf8; cursor: pointer; margin-top: 8px; text-decoration: underline; }
+        .auth-toggle { text-align: center; font-size: 13px; color: #38bdf8; cursor: pointer; margin-top: 10px; text-decoration: underline; background: none; border: none; padding: 0; margin-bottom: 0; }
 
         .type-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .btn-type-debit { background: linear-gradient(135deg, #dc2626, #991b1b); border: 2px solid #ef4444; color: #fff; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; opacity: 0.6; }
@@ -79,7 +76,7 @@
     <div class="top-bar">
         <h2>Budget Tracker</h2>
         <div class="header-actions">
-            <button class="btn-sm btn-logout" id="btn-logout" onclick="handleLogout()" style="display:none;">Logout</button>
+            <button type="button" class="btn-sm btn-logout" id="btn-logout" onclick="handleLogout()" style="display:none;">Logout</button>
         </div>
     </div>
 
@@ -87,14 +84,16 @@
     <div id="page-auth" class="page-view active">
         <div class="card">
             <h3 id="auth-title">Login to Your Account</h3>
-            <input type="email" id="auth-email" placeholder="Email Address">
-            <input type="password" id="auth-password" placeholder="Password">
+            <form onsubmit="handleAuthSubmit(event)">
+                <input type="email" id="auth-email" placeholder="Email Address" required>
+                <input type="password" id="auth-password" placeholder="Password">
+                
+                <button type="submit" id="btn-auth-submit">Login</button>
+            </form>
             
-            <button onclick="handleAuthSubmit()" id="btn-auth-submit">Login</button>
-            
-            <div class="auth-toggle" onclick="toggleAuthMode('signup')" id="link-signup">Don't have an account? Sign Up</div>
-            <div class="auth-toggle" onclick="toggleAuthMode('forgot')" id="link-forgot">Forgot Password?</div>
-            <div class="auth-toggle" onclick="toggleAuthMode('login')" id="link-login" style="display:none;">Back to Login</div>
+            <button type="button" class="auth-toggle" onclick="toggleAuthMode('signup')" id="link-signup">Don't have an account? Sign Up</button>
+            <button type="button" class="auth-toggle" onclick="toggleAuthMode('forgot')" id="link-forgot">Forgot Password?</button>
+            <button type="button" class="auth-toggle" onclick="toggleAuthMode('login')" id="link-login" style="display:none;">Back to Login</button>
         </div>
     </div>
 
@@ -121,7 +120,7 @@
                 <label>3. Enter Date & Amount (₹)</label>
                 <input type="date" id="entry-date">
                 <input type="number" id="amount" placeholder="Amount (e.g. 500)">
-                <button onclick="addTransaction()">💾 Save Transaction</button>
+                <button type="button" onclick="addTransaction()">💾 Save Transaction</button>
             </div>
         </div>
 
@@ -149,12 +148,12 @@
             </div>
         </div>
 
-        <button class="btn-nav" onclick="showPage('page-history')">📜 View Detailed History Page</button>
-        <button class="btn-nav" onclick="showPage('page-categories')">🏷️ Manage Category Allowances Page</button>
+        <button type="button" class="btn-nav" onclick="showPage('page-history')">📜 View Detailed History Page</button>
+        <button type="button" class="btn-nav" onclick="showPage('page-categories')">🏷️ Manage Category Allowances Page</button>
     </div>
         <!-- PAGE 2: HISTORY PAGE -->
     <div id="page-history" class="page-view">
-        <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
+        <button type="button" class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
 
         <div class="card">
             <label>Select Month History:</label>
@@ -185,7 +184,7 @@
 
     <!-- PAGE 3: CATEGORY ALLOWANCES PAGE -->
     <div id="page-categories" class="page-view">
-        <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
+        <button type="button" class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
 
         <div class="card">
             <h3>Total Monthly Allowance Overview</h3>
@@ -216,16 +215,22 @@
             <input type="text" id="new-cat-name" placeholder="Name (e.g. Snacks)">
             <label>Monthly Limit (₹)</label>
             <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 1000)">
-            <button onclick="addCategory()">+ Add Category</button>
+            <button type="button" onclick="addCategory()">+ Add Category</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ⚠️ PASTE YOUR SUPABASE DETAILS HERE
+    // ⚠️ PASTE YOUR EXACT SUPABASE URL AND KEY HERE
     const SUPABASE_URL = 'https://rjinxqbqiypcimtthcbv.supabase.co/rest/v1/'; 
     const SUPABASE_KEY = 'sb_publishable_cOp1rCjsTMyShJRMitbsng_jkxpmJ2m'; 
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    let db = null;
+    try {
+        db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } catch(e) {
+        console.error("Supabase config error:", e);
+    }
 
     let authMode = 'login';
     let currentUser = null;
@@ -237,17 +242,22 @@
     let chartInstance = null;
 
     async function checkUserSession() {
-        const { data: { session } } = await db.auth.getSession();
-        if (session) {
-            currentUser = session.user;
-            document.getElementById('btn-logout').style.display = 'block';
-            showPage('page-dashboard');
-            initMonthDropdowns();
-            await loadCategories();
-            loadDashboard();
-        } else {
-            document.getElementById('btn-logout').style.display = 'none';
-            showPage('page-auth');
+        if (!db) return;
+        try {
+            const { data: { session } } = await db.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                document.getElementById('btn-logout').style.display = 'block';
+                showPage('page-dashboard');
+                initMonthDropdowns();
+                await loadCategories();
+                loadDashboard();
+            } else {
+                document.getElementById('btn-logout').style.display = 'none';
+                showPage('page-auth');
+            }
+        } catch(e) {
+            console.error(e);
         }
     }
 
@@ -265,42 +275,55 @@
             title.innerText = 'Login to Your Account';
             submitBtn.innerText = 'Login';
             passwordInput.style.display = 'block';
+            passwordInput.required = true;
         } else if (mode === 'signup') {
             title.innerText = 'Create New Account';
             submitBtn.innerText = 'Sign Up';
             passwordInput.style.display = 'block';
+            passwordInput.required = true;
         } else if (mode === 'forgot') {
             title.innerText = 'Reset Password via Email';
             submitBtn.innerText = 'Send Reset Link';
             passwordInput.style.display = 'none';
+            passwordInput.required = false;
         }
     }
 
-    async function handleAuthSubmit() {
+    async function handleAuthSubmit(event) {
+        if (event) event.preventDefault();
+        
+        if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_URL) {
+            return alert('Error: Please replace YOUR_SUPABASE_URL with your actual Supabase URL!');
+        }
+
         const email = document.getElementById('auth-email').value;
         const password = document.getElementById('auth-password').value;
 
         if (!email) return alert('Please enter Email Address!');
 
-        if (authMode === 'login') {
-            const { data, error } = await db.auth.signInWithPassword({ email, password });
-            if (error) return alert(error.message);
-            checkUserSession();
-        } else if (authMode === 'signup') {
-            const { data, error } = await db.auth.signUp({ email, password });
-            if (error) return alert(error.message);
-            alert('Account created! Verification link sent to your Email.');
-            toggleAuthMode('login');
-        } else if (authMode === 'forgot') {
-            const { error } = await db.auth.resetPasswordForEmail(email);
-            if (error) return alert(error.message);
-            alert('Password Reset Link has been sent to your Email!');
-            toggleAuthMode('login');
+        try {
+            if (authMode === 'login') {
+                const { data, error } = await db.auth.signInWithPassword({ email, password });
+                if (error) return alert(error.message);
+                checkUserSession();
+            } else if (authMode === 'signup') {
+                const { data, error } = await db.auth.signUp({ email, password });
+                if (error) return alert(error.message);
+                alert('Account created! Verification link sent to your Email.');
+                toggleAuthMode('login');
+            } else if (authMode === 'forgot') {
+                const { error } = await db.auth.resetPasswordForEmail(email);
+                if (error) return alert(error.message);
+                alert('Password Reset Link has been sent to your Email!');
+                toggleAuthMode('login');
+            }
+        } catch(err) {
+            alert("Error: " + err.message);
         }
     }
 
     async function handleLogout() {
-        await db.auth.signOut();
+        if (db) await db.auth.signOut();
         currentUser = null;
         checkUserSession();
     }
@@ -539,7 +562,7 @@
                     </div>
                     <div>
                         <strong class="${isCredit ? 'amount-credit' : 'amount-debit'}">${isCredit ? '+' : '-'}₹${t.amount}</strong>
-                        <button class="del-btn" onclick="deleteTransaction(${t.id})">🗑️</button>
+                        <button type="button" class="del-btn" onclick="deleteTransaction(${t.id})">🗑️</button>
                     </div>
                 </div>
             `;
@@ -550,4 +573,3 @@
 </script>
 </body>
 </html>
-
