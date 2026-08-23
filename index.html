@@ -20,9 +20,15 @@
         
         button { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; }
         button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
+        .btn-nav { background: linear-gradient(135deg, #0284c7, #0369a1); font-size: 15px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-home { background: linear-gradient(135deg, #059669, #047857); margin-bottom: 15px; }
         .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
         .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); }
         
+        /* Page Views Navigation */
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
         /* Category Grid Cards */
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .budget-card { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 12px; text-align: center; }
@@ -48,65 +54,91 @@
 
 <div class="container">
     <h2>Budget & Expense Tracker</h2>
-    
-    <!-- Month Selection -->
-    <div class="card">
-        <label>Select Month History:</label>
-        <select id="month-filter" onchange="loadDashboard()"></select>
+
+    <!-- ================= PAGE 1: MAIN DASHBOARD ================= -->
+    <div id="page-dashboard" class="page-view active">
+        <!-- 1. ADD ENTRY (TOP FIRST PLACE) -->
+        <div class="card">
+            <h3>Add Entry</h3>
+            <label>Transaction Type</label>
+            <select id="type" onchange="toggleCategoryInput()">
+                <option value="expense">Expense (Debit)</option>
+                <option value="income">Income (Credit)</option>
+            </select>
+            
+            <label>Category / Description</label>
+            <div id="category-input-container">
+                <!-- Dynamic Input -->
+            </div>
+
+            <label>Amount</label>
+            <input type="number" id="amount" placeholder="Amount (e.g. 500)">
+            <button onclick="addTransaction()">Save Transaction</button>
+        </div>
+
+        <!-- 2. SELECT MONTH HISTORY -->
+        <div class="card">
+            <label>Select Month History:</label>
+            <select id="month-filter-dash" onchange="syncMonthAndLoad('dash')"></select>
+        </div>
+
+        <!-- NAVIGATION BUTTONS TO OTHER PAGES -->
+        <button class="btn-nav" onclick="showPage('page-history')">📜 View Detailed History Page</button>
+        <button class="btn-nav" onclick="showPage('page-categories')">🏷️ Manage Category Allowances Page</button>
     </div>
 
-    <!-- Category Allowances -->
-    <div class="card">
-        <h3>Category Allowances</h3>
-        <div id="budget-list" class="category-grid">Loading Budgets...</div>
-        
-        <h4 style="font-size:13px; color:#94a3b8; margin: 10px 0 8px;">Add New Allowance Category</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <!-- ================= PAGE 2: HISTORY PAGE ================= -->
+    <div id="page-history" class="page-view">
+        <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
+
+        <!-- 1. MONTH SELECTION (TOP FIRST PLACE) -->
+        <div class="card">
+            <label>Select Month History:</label>
+            <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
+        </div>
+
+        <!-- 2. HISTORY LIST (SECOND PLACE) -->
+        <div class="card">
+            <h3>Transaction History</h3>
+            <div class="filter-group">
+                <div>
+                    <label>Type Filter</label>
+                    <select id="filter-type" onchange="renderHistory()">
+                        <option value="all">All Transactions</option>
+                        <option value="income">Credit (Income) Only</option>
+                        <option value="expense">Debit (Expense) Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Category Filter</label>
+                    <select id="filter-category" onchange="renderHistory()">
+                        <!-- Dynamic Categories -->
+                    </select>
+                </div>
+            </div>
+            <div id="transaction-list">Loading...</div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 3: CATEGORY ALLOWANCES PAGE ================= -->
+    <div id="page-categories" class="page-view">
+        <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
+
+        <!-- CATEGORY ALLOWANCES GRID -->
+        <div class="card">
+            <h3>Category Allowances & Balances</h3>
+            <div id="budget-list" class="category-grid">Loading Budgets...</div>
+        </div>
+
+        <!-- ADD/EDIT CATEGORY FORM -->
+        <div class="card">
+            <h3>Add New Allowance Category</h3>
+            <label>Category Name</label>
             <input type="text" id="new-cat-name" placeholder="Name (e.g. Theatre)">
-            <input type="number" id="new-cat-limit" placeholder="Monthly Limit">
+            <label>Monthly Limit</label>
+            <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 500)">
+            <button onclick="addCategory()">+ Add Category</button>
         </div>
-        <button onclick="addCategory()">+ Add Category</button>
-    </div>
-
-    <!-- Add Entry Form -->
-    <div class="card">
-        <h3>Add Entry</h3>
-        <label>Transaction Type</label>
-        <select id="type" onchange="toggleCategoryInput()">
-            <option value="expense">Expense (Debit)</option>
-            <option value="income">Income (Credit)</option>
-        </select>
-        
-        <label>Category / Description</label>
-        <div id="category-input-container">
-            <!-- Dynamic Category Selection / Direct Text -->
-        </div>
-
-        <label>Amount</label>
-        <input type="number" id="amount" placeholder="Amount (e.g. 500)">
-        <button onclick="addTransaction()">Save Transaction</button>
-    </div>
-
-    <!-- History & Filters -->
-    <div class="card">
-        <h3>History Filter</h3>
-        <div class="filter-group">
-            <div>
-                <label>Type Filter</label>
-                <select id="filter-type" onchange="renderHistory()">
-                    <option value="all">All Transactions</option>
-                    <option value="income">Credit (Income) Only</option>
-                    <option value="expense">Debit (Expense) Only</option>
-                </select>
-            </div>
-            <div>
-                <label>Category Filter</label>
-                <select id="filter-category" onchange="renderHistory()">
-                    <!-- Populated dynamically -->
-                </select>
-            </div>
-        </div>
-        <div id="transaction-list">Loading...</div>
     </div>
 </div>
 
@@ -118,18 +150,47 @@
 
     let categories = [];
     let currentTransactions = [];
+    let selectedMonth = '';
 
-    function initMonthDropdown() {
-        const select = document.getElementById('month-filter');
+    // Page Switching Logic
+    function showPage(pageId) {
+        document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function initMonthDropdowns() {
+        const dashSelect = document.getElementById('month-filter-dash');
+        const histSelect = document.getElementById('month-filter-hist');
+        dashSelect.innerHTML = '';
+        histSelect.innerHTML = '';
+
         const currentDate = new Date();
         for (let i = 0; i < 12; i++) {
             const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
             const monthVal = date.toISOString().slice(0, 7);
             const monthText = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-            const opt = document.createElement('option');
-            opt.value = monthVal; opt.innerText = monthText;
-            select.appendChild(opt);
+            
+            const opt1 = document.createElement('option');
+            opt1.value = monthVal; opt1.innerText = monthText;
+            dashSelect.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = monthVal; opt2.innerText = monthText;
+            histSelect.appendChild(opt2);
         }
+        selectedMonth = dashSelect.value;
+    }
+
+    function syncMonthAndLoad(source) {
+        if (source === 'dash') {
+            selectedMonth = document.getElementById('month-filter-dash').value;
+            document.getElementById('month-filter-hist').value = selectedMonth;
+        } else {
+            selectedMonth = document.getElementById('month-filter-hist').value;
+            document.getElementById('month-filter-dash').value = selectedMonth;
+        }
+        loadDashboard();
     }
 
     async function loadCategories() {
@@ -137,7 +198,6 @@
         categories = data || [];
         toggleCategoryInput();
         
-        // Populate History Category Filter
         const catFilter = document.getElementById('filter-category');
         catFilter.innerHTML = '<option value="all">All Categories</option>';
         categories.forEach(c => {
@@ -167,6 +227,7 @@
         document.getElementById('new-cat-limit').value = '';
         await loadCategories();
         loadDashboard();
+        alert('Category added successfully!');
     }
 
     async function updateLimit(catName, currentLimit) {
@@ -187,14 +248,12 @@
     }
 
     async function loadDashboard() {
-        const selectedMonth = document.getElementById('month-filter').value;
         const startDate = `${selectedMonth}-01T00:00:00.000Z`;
         const endDate = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0, 23, 59, 59).toISOString();
 
         const { data: transactions } = await db.from('transactions').select('*').gte('created_at', startDate).lte('created_at', endDate);
         currentTransactions = transactions || [];
 
-        // Category Budget Calculations
         const budgetContainer = document.getElementById('budget-list');
         budgetContainer.innerHTML = '';
 
@@ -268,9 +327,10 @@
         document.getElementById('amount').value = '';
         if(type === 'income') categoryInput.value = '';
         loadDashboard();
+        alert('Transaction saved successfully!');
     }
 
-    initMonthDropdown();
+    initMonthDropdowns();
     loadCategories().then(() => loadDashboard());
 </script>
 
