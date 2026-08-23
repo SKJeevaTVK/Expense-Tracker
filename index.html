@@ -24,21 +24,32 @@
         .btn-home { background: linear-gradient(135deg, #059669, #047857); margin-bottom: 15px; }
         .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
         .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .btn-export { background: linear-gradient(135deg, #10b981, #059669); margin-top: 10px; }
         
         /* Page Views Navigation */
         .page-view { display: none; }
         .page-view.active { display: block; }
 
+        /* Overview Grid */
+        .overview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .overview-box { background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
+        .overview-box span { font-size: 10px; color: #94a3b8; display: block; text-transform: uppercase; }
+        .overview-box strong { font-size: 14px; margin-top: 4px; display: block; }
+
         /* Category Grid Cards */
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .budget-card { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 12px; text-align: center; }
+        .budget-card { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 12px; text-align: center; position: relative; overflow: hidden; }
         .budget-card strong { font-size: 14px; color: #f8fafc; display: block; }
         .budget-card span { font-size: 11px; color: #64748b; }
         .budget-status { font-weight: bold; font-size: 16px; margin: 6px 0; }
         .positive { color: #4ade80; }
         .negative { color: #f87171; }
-        .cat-actions { display: flex; gap: 5px; margin-top: 6px; }
+        .cat-actions { display: flex; gap: 5px; margin-top: 8px; }
         .cat-actions button { padding: 4px; font-size: 10px; margin: 0; }
+
+        /* Progress Bar */
+        .progress-bg { background: #334155; height: 6px; border-radius: 3px; margin: 6px 0; overflow: hidden; }
+        .progress-fill { height: 100%; transition: width 0.3s ease; }
 
         /* Filter Controls */
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
@@ -48,6 +59,7 @@
         .list-item span { font-size: 11px; color: #64748b; }
         .amount-credit { color: #4ade80; font-weight: bold; }
         .amount-debit { color: #f87171; font-weight: bold; }
+        .del-btn { background: transparent; border: none; color: #ef4444; font-size: 16px; width: auto; padding: 0 5px; margin: 0; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -57,7 +69,7 @@
 
     <!-- ================= PAGE 1: MAIN DASHBOARD ================= -->
     <div id="page-dashboard" class="page-view active">
-        <!-- 1. ADD ENTRY (TOP FIRST PLACE) -->
+        <!-- 1. ADD ENTRY -->
         <div class="card">
             <h3>Add Entry</h3>
             <label>Transaction Type</label>
@@ -67,22 +79,35 @@
             </select>
             
             <label>Category / Description</label>
-            <div id="category-input-container">
-                <!-- Dynamic Input -->
-            </div>
+            <div id="category-input-container"></div>
 
             <label>Amount</label>
             <input type="number" id="amount" placeholder="Amount (e.g. 500)">
             <button onclick="addTransaction()">Save Transaction</button>
         </div>
 
-        <!-- 2. SELECT MONTH HISTORY -->
+        <!-- 2. SELECT MONTH HISTORY & OVERVIEW -->
         <div class="card">
             <label>Select Month History:</label>
             <select id="month-filter-dash" onchange="syncMonthAndLoad('dash')"></select>
+            
+            <div class="overview-grid">
+                <div class="overview-box">
+                    <span>Income</span>
+                    <strong style="color: #4ade80;" id="sum-income">₹0</strong>
+                </div>
+                <div class="overview-box">
+                    <span>Expense</span>
+                    <strong style="color: #f87171;" id="sum-expense">₹0</strong>
+                </div>
+                <div class="overview-box">
+                    <span>Balance</span>
+                    <strong style="color: #38bdf8;" id="sum-balance">₹0</strong>
+                </div>
+            </div>
         </div>
 
-        <!-- NAVIGATION BUTTONS TO OTHER PAGES -->
+        <!-- NAVIGATION BUTTONS -->
         <button class="btn-nav" onclick="showPage('page-history')">📜 View Detailed History Page</button>
         <button class="btn-nav" onclick="showPage('page-categories')">🏷️ Manage Category Allowances Page</button>
     </div>
@@ -91,13 +116,13 @@
     <div id="page-history" class="page-view">
         <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
 
-        <!-- 1. MONTH SELECTION (TOP FIRST PLACE) -->
+        <!-- MONTH SELECTION -->
         <div class="card">
             <label>Select Month History:</label>
             <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
         </div>
 
-        <!-- 2. HISTORY LIST (SECOND PLACE) -->
+        <!-- HISTORY LIST -->
         <div class="card">
             <h3>Transaction History</h3>
             <div class="filter-group">
@@ -111,12 +136,11 @@
                 </div>
                 <div>
                     <label>Category Filter</label>
-                    <select id="filter-category" onchange="renderHistory()">
-                        <!-- Dynamic Categories -->
-                    </select>
+                    <select id="filter-category" onchange="renderHistory()"></select>
                 </div>
             </div>
             <div id="transaction-list">Loading...</div>
+            <button class="btn-export" onclick="exportToCSV()">📥 Download Excel / CSV History</button>
         </div>
     </div>
 
@@ -130,7 +154,7 @@
             <div id="budget-list" class="category-grid">Loading Budgets...</div>
         </div>
 
-        <!-- ADD/EDIT CATEGORY FORM -->
+        <!-- ADD CATEGORY FORM -->
         <div class="card">
             <h3>Add New Allowance Category</h3>
             <label>Category Name</label>
@@ -152,7 +176,6 @@
     let currentTransactions = [];
     let selectedMonth = '';
 
-    // Page Switching Logic
     function showPage(pageId) {
         document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
@@ -240,9 +263,16 @@
     }
 
     async function removeCategory(catName) {
-        if(confirm(`Remove "${catName}" category? (Previous transaction data will stay safe in Database)`)) {
+        if(confirm(`Remove "${catName}" category? (Previous transaction data will stay safe)`)) {
             await db.from('category_budgets').update({ is_active: false }).eq('category_name', catName);
             await loadCategories();
+            loadDashboard();
+        }
+    }
+
+    async function deleteTransaction(id) {
+        if(confirm("Are you sure you want to delete this transaction entry?")) {
+            await db.from('transactions').delete().eq('id', id);
             loadDashboard();
         }
     }
@@ -251,9 +281,18 @@
         const startDate = `${selectedMonth}-01T00:00:00.000Z`;
         const endDate = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0, 23, 59, 59).toISOString();
 
-        const { data: transactions } = await db.from('transactions').select('*').gte('created_at', startDate).lte('created_at', endDate);
+        const { data: transactions } = await db.from('transactions').select('*').gte('created_at', startDate).lte('created_at', endDate).order('created_at', { ascending: false });
         currentTransactions = transactions || [];
 
+        // Summary Calculations
+        let totIncome = currentTransactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
+        let totExpense = currentTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
+        
+        document.getElementById('sum-income').innerText = `₹${totIncome}`;
+        document.getElementById('sum-expense').innerText = `₹${totExpense}`;
+        document.getElementById('sum-balance').innerText = `₹${totIncome - totExpense}`;
+
+        // Budget Calculations & Progress Bars
         const budgetContainer = document.getElementById('budget-list');
         budgetContainer.innerHTML = '';
 
@@ -264,13 +303,22 @@
 
             const remBalance = c.monthly_limit - catExpenses;
             const statusClass = remBalance >= 0 ? 'positive' : 'negative';
+            
+            // Progress percentage logic
+            let pct = Math.min(100, Math.round((catExpenses / c.monthly_limit) * 100)) || 0;
+            let barColor = pct > 90 ? '#ef4444' : (pct > 70 ? '#f59e0b' : '#10b981');
 
             budgetContainer.innerHTML += `
                 <div class="budget-card">
                     <strong>${c.category_name}</strong>
                     <span>Limit: ₹${c.monthly_limit}</span>
                     <div class="budget-status ${statusClass}">₹${remBalance}</div>
-                    <span>Spent: ₹${catExpenses}</span>
+                    
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: ${pct}%; background: ${barColor};"></div>
+                    </div>
+                    <span>Spent: ₹${catExpenses} (${pct}%)</span>
+
                     <div class="cat-actions">
                         <button class="btn-edit" onclick="updateLimit('${c.category_name}', ${c.monthly_limit})">Edit</button>
                         <button class="btn-danger" onclick="removeCategory('${c.category_name}')">Remove</button>
@@ -307,9 +355,12 @@
                         <strong>${t.category}</strong><br>
                         <span>${new Date(t.created_at).toLocaleDateString()}</span>
                     </div>
-                    <strong class="${isCredit ? 'amount-credit' : 'amount-debit'}">
-                        ${isCredit ? '+' : '-'}₹${t.amount}
-                    </strong>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <strong class="${isCredit ? 'amount-credit' : 'amount-debit'}">
+                            ${isCredit ? '+' : '-'}₹${t.amount}
+                        </strong>
+                        <button class="del-btn" onclick="deleteTransaction(${t.id})" title="Delete Entry">🗑️</button>
+                    </div>
                 </div>
             `;
         });
@@ -328,6 +379,21 @@
         if(type === 'income') categoryInput.value = '';
         loadDashboard();
         alert('Transaction saved successfully!');
+    }
+
+    function exportToCSV() {
+        if(currentTransactions.length === 0) return alert('No transactions to export!');
+        let csvContent = "data:text/csv;charset=utf-8,Date,Type,Category,Amount\n";
+        currentTransactions.forEach(t => {
+            csvContent += `${new Date(t.created_at).toLocaleDateString()},${t.type},${t.category},${t.amount}\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Transactions_${selectedMonth}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     initMonthDropdowns();
