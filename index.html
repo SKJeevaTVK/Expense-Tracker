@@ -12,8 +12,12 @@
         .container { max-width: 520px; margin: 0 auto; }
         
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: #38bdf8; font-size: 22px; text-shadow: 0 0 10px rgba(56,189,248,0.3); margin: 0; }
-        .btn-lang { width: auto; padding: 6px 12px; margin: 0; font-size: 13px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border-radius: 20px; border: 1px solid #a78bfa; cursor: pointer; }
+        h2 { color: #38bdf8; font-size: 20px; text-shadow: 0 0 10px rgba(56,189,248,0.3); margin: 0; }
+        
+        .header-actions { display: flex; gap: 8px; }
+        .btn-sm { width: auto; padding: 6px 12px; margin: 0; font-size: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
+        .btn-lang { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
+        .btn-logout { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
 
         .card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37); }
         h3 { font-size: 16px; margin-bottom: 14px; color: #93c5fd; display: flex; justify-content: space-between; align-items: center; }
@@ -27,80 +31,86 @@
         .btn-nav { background: linear-gradient(135deg, #0284c7, #0369a1); font-size: 15px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-home { background: linear-gradient(135deg, #059669, #047857); margin-bottom: 15px; }
         .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .btn-export { background: linear-gradient(135deg, #10b981, #059669); margin-top: 10px; }
         
+        .auth-toggle { text-align: center; font-size: 13px; color: #38bdf8; cursor: pointer; margin-top: 8px; text-decoration: underline; }
+
         .type-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .btn-type-debit { background: linear-gradient(135deg, #dc2626, #991b1b); border: 2px solid #ef4444; color: #fff; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; opacity: 0.6; transition: all 0.3s ease; }
-        .btn-type-credit { background: linear-gradient(135deg, #16a34a, #166534); border: 2px solid #22c55e; color: #fff; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; opacity: 0.6; transition: all 0.3s ease; }
+        .btn-type-debit { background: linear-gradient(135deg, #dc2626, #991b1b); border: 2px solid #ef4444; color: #fff; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; opacity: 0.6; }
+        .btn-type-credit { background: linear-gradient(135deg, #16a34a, #166534); border: 2px solid #22c55e; color: #fff; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; opacity: 0.6; }
         .btn-type-debit.selected, .btn-type-credit.selected { opacity: 1; transform: scale(1.03); }
-        .btn-type-debit.selected { border-color: #f87171; box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
-        .btn-type-credit.selected { border-color: #4ade80; box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
 
         .cat-chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin-bottom: 15px; }
         .btn-cat-chip { background: #1e293b; border: 1px solid #475569; color: #cbd5e1; padding: 10px 8px; border-radius: 10px; font-size: 13px; font-weight: 600; margin: 0; text-align: center; }
-        .btn-cat-chip.selected { background: linear-gradient(135deg, #0284c7, #0369a1); border-color: #38bdf8; color: #fff; box-shadow: 0 0 10px rgba(56,189,248,0.4); }
+        .btn-cat-chip.selected { background: linear-gradient(135deg, #0284c7, #0369a1); border-color: #38bdf8; color: #fff; }
 
         .step-container { display: none; }
-        .step-container.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .step-container.active { display: block; }
 
         .page-view { display: none; }
         .page-view.active { display: block; }
 
         .overview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .overview-box { background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
-        .overview-box span { font-size: 10px; color: #94a3b8; display: block; text-transform: uppercase; }
+        .overview-box span { font-size: 10px; color: #94a3b8; display: block; }
         .overview-box strong { font-size: 14px; margin-top: 4px; display: block; }
 
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .budget-card { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 12px; text-align: center; position: relative; overflow: hidden; }
-        .budget-card strong { font-size: 14px; color: #f8fafc; display: block; }
-        .budget-card span { font-size: 11px; color: #64748b; }
+        .budget-card { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 12px; text-align: center; }
         .budget-status { font-weight: bold; font-size: 16px; margin: 6px 0; }
         .positive { color: #4ade80; }
         .negative { color: #f87171; }
-        .cat-actions { display: flex; gap: 5px; margin-top: 8px; }
-        .cat-actions button { padding: 4px; font-size: 10px; margin: 0; }
 
         .progress-bg { background: #334155; height: 6px; border-radius: 3px; margin: 6px 0; overflow: hidden; }
         .progress-fill { height: 100%; transition: width 0.3s ease; }
 
-        .warning-badge { background: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 6px; display: inline-block; margin-top: 4px; }
-
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; }
-        .list-item span { font-size: 11px; color: #64748b; }
         .amount-credit { color: #4ade80; font-weight: bold; }
         .amount-debit { color: #f87171; font-weight: bold; }
         .del-btn { background: transparent; border: none; color: #ef4444; font-size: 16px; width: auto; padding: 0 5px; margin: 0; cursor: pointer; }
         
-        .chart-container { position: relative; max-width: 280px; margin: 15px auto 5px auto; }
+        .chart-container { position: relative; max-width: 250px; margin: 15px auto 5px auto; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="top-bar">
-        <h2 id="app-title">Budget Tracker</h2>
-        <button class="btn-lang" onclick="toggleLanguage()" id="lang-btn">🌐 தமிழ்</button>
+        <h2>Budget Tracker</h2>
+        <div class="header-actions">
+            <button class="btn-sm btn-logout" id="btn-logout" onclick="handleLogout()" style="display:none;">Logout</button>
+        </div>
     </div>
 
-    <!-- ================= PAGE 1: MAIN DASHBOARD ================= -->
-    <div id="page-dashboard" class="page-view active">
-        <!-- 1. ADD ENTRY -->
+    <!-- PAGE 0: AUTHENTICATION -->
+    <div id="page-auth" class="page-view active">
         <div class="card">
-            <h3 id="txt-add-entry">Add Entry</h3>
+            <h3 id="auth-title">Login to Your Account</h3>
+            <input type="email" id="auth-email" placeholder="Email Address">
+            <input type="password" id="auth-password" placeholder="Password">
             
-            <label id="lbl-step1">1. Select Transaction Type</label>
+            <button onclick="handleAuthSubmit()" id="btn-auth-submit">Login</button>
+            
+            <div class="auth-toggle" onclick="toggleAuthMode('signup')" id="link-signup">Don't have an account? Sign Up</div>
+            <div class="auth-toggle" onclick="toggleAuthMode('forgot')" id="link-forgot">Forgot Password?</div>
+            <div class="auth-toggle" onclick="toggleAuthMode('login')" id="link-login" style="display:none;">Back to Login</div>
+        </div>
+    </div>
+
+    <!-- PAGE 1: MAIN DASHBOARD -->
+    <div id="page-dashboard" class="page-view">
+        <div class="card">
+            <h3>Add Entry</h3>
+            
+            <label>1. Select Transaction Type</label>
             <div class="type-toggle-grid">
                 <button type="button" class="btn-type-debit" id="btn-debit" onclick="selectType('expense')">🔴 Debit (Expense)</button>
                 <button type="button" class="btn-type-credit" id="btn-credit" onclick="selectType('income')">🟢 Credit (Income)</button>
             </div>
 
             <div id="step-category" class="step-container">
-                <label id="lbl-step2">2. Select Category / Description</label>
+                <label>2. Select Category / Description</label>
                 <div id="category-buttons-grid" class="cat-chip-grid"></div>
                 <div id="custom-cat-container" style="display:none; margin-top:-5px;">
                     <input type="text" id="custom-cat-input" placeholder="Enter Description">
@@ -108,84 +118,77 @@
             </div>
 
             <div id="step-amount" class="step-container">
-                <label id="lbl-step3">3. Enter Date & Amount</label>
+                <label>3. Enter Date & Amount (₹)</label>
                 <input type="date" id="entry-date">
                 <input type="number" id="amount" placeholder="Amount (e.g. 500)">
-                <button onclick="addTransaction()" id="btn-save-tx">💾 Save Transaction</button>
+                <button onclick="addTransaction()">💾 Save Transaction</button>
             </div>
         </div>
 
-        <!-- 2. OVERVIEW & CHART -->
         <div class="card">
-            <label id="lbl-select-month-1">Select Month History:</label>
+            <label>Select Month History:</label>
             <select id="month-filter-dash" onchange="syncMonthAndLoad('dash')"></select>
             
             <div class="overview-grid">
                 <div class="overview-box">
-                    <span id="txt-sum-income">Income</span>
+                    <span>Income</span>
                     <strong style="color: #4ade80;" id="sum-income">₹0</strong>
                 </div>
                 <div class="overview-box">
-                    <span id="txt-sum-expense">Expense</span>
+                    <span>Expense</span>
                     <strong style="color: #f87171;" id="sum-expense">₹0</strong>
                 </div>
                 <div class="overview-box">
-                    <span id="txt-sum-balance">Balance</span>
+                    <span>Balance</span>
                     <strong style="color: #38bdf8;" id="sum-balance">₹0</strong>
                 </div>
             </div>
 
-            <!-- VISUAL CHART -->
             <div class="chart-container">
                 <canvas id="expenseChart"></canvas>
             </div>
         </div>
 
-        <button class="btn-nav" onclick="showPage('page-history')" id="btn-goto-history">📜 View Detailed History Page</button>
-        <button class="btn-nav" onclick="showPage('page-categories')" id="btn-goto-categories">🏷️ Manage Category Allowances Page</button>
+        <button class="btn-nav" onclick="showPage('page-history')">📜 View Detailed History Page</button>
+        <button class="btn-nav" onclick="showPage('page-categories')">🏷️ Manage Category Allowances Page</button>
     </div>
-
-    <!-- ================= PAGE 2: HISTORY PAGE ================= -->
+        <!-- PAGE 2: HISTORY PAGE -->
     <div id="page-history" class="page-view">
-        <button class="btn-home" onclick="showPage('page-dashboard')" id="btn-home-1">🏠 Go to Dashboard</button>
+        <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
 
         <div class="card">
-            <label id="lbl-select-month-2">Select Month History:</label>
+            <label>Select Month History:</label>
             <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
         </div>
 
         <div class="card">
-            <h3 id="txt-tx-history">Transaction History</h3>
-            
-            <!-- SEARCH BAR -->
+            <h3>Transaction History</h3>
             <input type="text" id="search-input" placeholder="🔍 Search Category or Amount..." onkeyup="renderHistory()" style="margin-bottom: 10px;">
 
             <div class="filter-group">
                 <div>
-                    <label id="lbl-type-filter">Type Filter</label>
+                    <label>Type Filter</label>
                     <select id="filter-type" onchange="renderHistory()">
-                        <option value="all" id="opt-all-type">All Transactions</option>
-                        <option value="income" id="opt-credit-only">Credit (Income) Only</option>
-                        <option value="expense" id="opt-debit-only">Debit (Expense) Only</option>
+                        <option value="all">All Transactions</option>
+                        <option value="income">Credit Only</option>
+                        <option value="expense">Debit Only</option>
                     </select>
                 </div>
                 <div>
-                    <label id="lbl-cat-filter">Category Filter</label>
+                    <label>Category Filter</label>
                     <select id="filter-category" onchange="renderHistory()"></select>
                 </div>
             </div>
             <div id="transaction-list">Loading...</div>
-            <button class="btn-export" onclick="exportToCSV()" id="btn-export-csv">📥 Download Excel / CSV History</button>
         </div>
     </div>
 
-    <!-- ================= PAGE 3: CATEGORY ALLOWANCES PAGE ================= -->
+    <!-- PAGE 3: CATEGORY ALLOWANCES PAGE -->
     <div id="page-categories" class="page-view">
-        <button class="btn-home" onclick="showPage('page-dashboard')" id="btn-home-2">🏠 Go to Dashboard</button>
+        <button class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
 
-        <!-- OVERALL ALLOWANCE SUMMARY CARD -->
         <div class="card">
-            <h3 id="txt-overall-budget-title">Total Monthly Allowance Overview</h3>
+            <h3>Total Monthly Allowance Overview</h3>
             <div class="overview-grid">
                 <div class="overview-box">
                     <span>Limit</span>
@@ -203,137 +206,103 @@
         </div>
 
         <div class="card">
-            <h3 id="txt-cat-allowance">Category Allowances & Balances</h3>
+            <h3>Category Allowances & Balances</h3>
             <div id="budget-list" class="category-grid">Loading Budgets...</div>
         </div>
 
         <div class="card">
-            <h3 id="txt-add-cat">Add New Allowance Category</h3>
-            <label id="lbl-cat-name">Category Name</label>
-            <input type="text" id="new-cat-name" placeholder="Name (e.g. Theatre)">
-            <label id="lbl-cat-limit">Monthly Limit</label>
-            <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 500)">
-            <button onclick="addCategory()" id="btn-add-cat-btn">+ Add Category</button>
+            <h3>Add New Allowance Category</h3>
+            <label>Category Name</label>
+            <input type="text" id="new-cat-name" placeholder="Name (e.g. Snacks)">
+            <label>Monthly Limit (₹)</label>
+            <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 1000)">
+            <button onclick="addCategory()">+ Add Category</button>
         </div>
     </div>
 </div>
 
 <script>
     // ⚠️ PASTE YOUR SUPABASE DETAILS HERE
-    const SUPABASE_URL = 'https://rjinxqbqiypcimtthcbv.supabase.co'; 
-    const SUPABASE_KEY = 'sb_publishable_cOp1rCjsTMyShJRMitbsng_jkxpmJ2m'; 
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL'; 
+    const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY'; 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let authMode = 'login';
+    let currentUser = null;
     let categories = [];
     let currentTransactions = [];
     let selectedMonth = '';
     let selectedType = null;
     let selectedCategory = null;
-    let currentLang = 'EN';
     let chartInstance = null;
 
-    const langData = {
-        EN: {
-            title: "Budget Tracker",
-            addEntry: "Add Entry",
-            step1: "1. Select Transaction Type",
-            btnDebit: "🔴 Debit (Expense)",
-            btnCredit: "🟢 Credit (Income)",
-            step2: "2. Select Category / Description",
-            step3: "3. Enter Date & Amount",
-            btnSave: "💾 Save Transaction",
-            selMonth: "Select Month History:",
-            sumIncome: "Income",
-            sumExpense: "Expense",
-            sumBalance: "Balance",
-            btnHistory: "📜 View Detailed History Page",
-            btnCategories: "🏷️ Manage Category Allowances Page",
-            btnDashboard: "🏠 Go to Dashboard",
-            txHistory: "Transaction History",
-            typeFilter: "Type Filter",
-            catFilter: "Category Filter",
-            optAllType: "All Transactions",
-            optCreditOnly: "Credit (Income) Only",
-            optDebitOnly: "Debit (Expense) Only",
-            btnExport: "📥 Download Excel / CSV History",
-            catAllowance: "Category Allowances & Balances",
-            addCatTitle: "Add New Allowance Category",
-            catNameLabel: "Category Name",
-            catLimitLabel: "Monthly Limit",
-            btnAddCat: "+ Add Category",
-            overallBudgetTitle: "Total Monthly Allowance Overview",
-            langBtn: "🌐 தமிழ்"
-        },
-        TA: {
-            title: "வரவு செலவு கணக்கு",
-            addEntry: "புதிய பதிவு சேர்க்க",
-            step1: "1. பரிவர்த்தனை வகையைத் தேர்ந்தெடுக்கவும்",
-            btnDebit: "🔴 செலவு (Debit)",
-            btnCredit: "🟢 வரவு (Credit)",
-            step2: "2. வகை / விளக்கத்தைத் தேர்ந்தெடுக்கவும்",
-            step3: "3. தேதி & தொகையை உள்ளிடவும்",
-            btnSave: "💾 சேமிக்கவும்",
-            selMonth: "மாத வரலாற்றைத் தேர்ந்தெடுக்கவும்:",
-            sumIncome: "மொத்த வரவு",
-            sumExpense: "மொத்த செலவு",
-            sumBalance: "மீதி இருப்பு",
-            btnHistory: "📜 முழு வரலாற்றுப் பக்கம்",
-            btnCategories: "🏷️ வகை ஒதுக்கீடுகள் பக்கம்",
-            btnDashboard: "🏠 முகப்பிற்குச் செல்ல",
-            txHistory: "பரிவர்த்தனை வரலாறு",
-            typeFilter: "வகை வடிகட்டி",
-            catFilter: "பிரிவு வடிகட்டி",
-            optAllType: "எல்லா பரிவர்த்தனைகளும்",
-            optCreditOnly: "வரவு (Credit) மட்டும்",
-            optDebitOnly: "செலவு (Debit) மட்டும்",
-            btnExport: "📥 Excel / CSV ஆக பதிவிறக்க",
-            catAllowance: "வகை ஒதுக்கீடுகள் & இருப்புகள்",
-            addCatTitle: "புதிய ஒதுக்கீட்டு வகை சேர்க்க",
-            catNameLabel: "வகை பெயர்",
-            catLimitLabel: "மாதாந்திர வரம்பு",
-            btnAddCat: "+ வகை சேர்க்க",
-            overallBudgetTitle: "மொத்த மாதாந்திர ஒதுக்கீடு கண்ணோட்டம்",
-            langBtn: "🌐 English"
+    async function checkUserSession() {
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+            currentUser = session.user;
+            document.getElementById('btn-logout').style.display = 'block';
+            showPage('page-dashboard');
+            initMonthDropdowns();
+            await loadCategories();
+            loadDashboard();
+        } else {
+            document.getElementById('btn-logout').style.display = 'none';
+            showPage('page-auth');
         }
-    };
+    }
 
-    function toggleLanguage() {
-        currentLang = currentLang === 'EN' ? 'TA' : 'EN';
-        const t = langData[currentLang];
+    function toggleAuthMode(mode) {
+        authMode = mode;
+        const passwordInput = document.getElementById('auth-password');
+        const submitBtn = document.getElementById('btn-auth-submit');
+        const title = document.getElementById('auth-title');
 
-        document.getElementById('app-title').innerText = t.title;
-        document.getElementById('txt-add-entry').innerText = t.addEntry;
-        document.getElementById('lbl-step1').innerText = t.step1;
-        document.getElementById('btn-debit').innerText = t.btnDebit;
-        document.getElementById('btn-credit').innerText = t.btnCredit;
-        document.getElementById('lbl-step2').innerText = t.step2;
-        document.getElementById('lbl-step3').innerText = t.step3;
-        document.getElementById('btn-save-tx').innerText = t.btnSave;
-        document.getElementById('lbl-select-month-1').innerText = t.selMonth;
-        document.getElementById('lbl-select-month-2').innerText = t.selMonth;
-        document.getElementById('txt-sum-income').innerText = t.sumIncome;
-        document.getElementById('txt-sum-expense').innerText = t.sumExpense;
-        document.getElementById('txt-sum-balance').innerText = t.sumBalance;
-        document.getElementById('btn-goto-history').innerText = t.btnHistory;
-        document.getElementById('btn-goto-categories').innerText = t.btnCategories;
-        document.getElementById('btn-home-1').innerText = t.btnDashboard;
-        document.getElementById('btn-home-2').innerText = t.btnDashboard;
-        document.getElementById('txt-tx-history').innerText = t.txHistory;
-        document.getElementById('lbl-type-filter').innerText = t.typeFilter;
-        document.getElementById('lbl-cat-filter').innerText = t.catFilter;
-        document.getElementById('opt-all-type').innerText = t.optAllType;
-        document.getElementById('opt-credit-only').innerText = t.optCreditOnly;
-        document.getElementById('opt-debit-only').innerText = t.optDebitOnly;
-        document.getElementById('btn-export-csv').innerText = t.btnExport;
-        document.getElementById('txt-cat-allowance').innerText = t.catAllowance;
-        document.getElementById('txt-add-cat').innerText = t.addCatTitle;
-        document.getElementById('lbl-cat-name').innerText = t.catNameLabel;
-        document.getElementById('lbl-cat-limit').innerText = t.catLimitLabel;
-        document.getElementById('btn-add-cat-btn').innerText = t.btnAddCat;
-        document.getElementById('txt-overall-budget-title').innerText = t.overallBudgetTitle;
-        document.getElementById('lang-btn').innerText = t.langBtn;
-        
-        loadDashboard();
+        document.getElementById('link-signup').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('link-forgot').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('link-login').style.display = mode !== 'login' ? 'block' : 'none';
+
+        if (mode === 'login') {
+            title.innerText = 'Login to Your Account';
+            submitBtn.innerText = 'Login';
+            passwordInput.style.display = 'block';
+        } else if (mode === 'signup') {
+            title.innerText = 'Create New Account';
+            submitBtn.innerText = 'Sign Up';
+            passwordInput.style.display = 'block';
+        } else if (mode === 'forgot') {
+            title.innerText = 'Reset Password via Email';
+            submitBtn.innerText = 'Send Reset Link';
+            passwordInput.style.display = 'none';
+        }
+    }
+
+    async function handleAuthSubmit() {
+        const email = document.getElementById('auth-email').value;
+        const password = document.getElementById('auth-password').value;
+
+        if (!email) return alert('Please enter Email Address!');
+
+        if (authMode === 'login') {
+            const { data, error } = await db.auth.signInWithPassword({ email, password });
+            if (error) return alert(error.message);
+            checkUserSession();
+        } else if (authMode === 'signup') {
+            const { data, error } = await db.auth.signUp({ email, password });
+            if (error) return alert(error.message);
+            alert('Account created! Verification link sent to your Email.');
+            toggleAuthMode('login');
+        } else if (authMode === 'forgot') {
+            const { error } = await db.auth.resetPasswordForEmail(email);
+            if (error) return alert(error.message);
+            alert('Password Reset Link has been sent to your Email!');
+            toggleAuthMode('login');
+        }
+    }
+
+    async function handleLogout() {
+        await db.auth.signOut();
+        currentUser = null;
+        checkUserSession();
     }
 
     function showPage(pageId) {
@@ -382,7 +351,7 @@
         categories = data || [];
         
         const catFilter = document.getElementById('filter-category');
-        catFilter.innerHTML = `<option value="all">${currentLang === 'TA' ? 'எல்லா பிரிவுகளும்' : 'All Categories'}</option>`;
+        catFilter.innerHTML = `<option value="all">All Categories</option>`;
         categories.forEach(c => {
             catFilter.innerHTML += `<option value="${c.category_name}">${c.category_name}</option>`;
         });
@@ -416,7 +385,6 @@
 
     function selectCategory(catName, btnElement) {
         selectedCategory = catName;
-
         document.querySelectorAll('.btn-cat-chip').forEach(b => b.classList.remove('selected'));
         if (btnElement) btnElement.classList.add('selected');
 
@@ -429,21 +397,7 @@
         document.getElementById('step-amount').classList.add('active');
     }
 
-    function resetEntryForm() {
-        selectedType = null;
-        selectedCategory = null;
-        document.getElementById('btn-debit').classList.remove('selected');
-        document.getElementById('btn-credit').classList.remove('selected');
-        document.getElementById('step-category').classList.remove('active');
-        document.getElementById('step-amount').classList.remove('active');
-        document.getElementById('amount').value = '';
-        document.getElementById('custom-cat-input').value = '';
-        document.getElementById('entry-date').valueAsDate = new Date();
-    }
-
     async function addTransaction() {
-        if (!selectedType) return alert('Select Transaction Type first!');
-        
         let category = selectedCategory;
         if (category === 'Other Income') {
             category = document.getElementById('custom-cat-input').value || 'Other Income';
@@ -454,47 +408,41 @@
 
         if (!amount || !category || !entryDate) return alert('Enter valid Date, Category and Amount!');
 
-        const createdAt = new Date(entryDate).toISOString();
-
-        await db.from('transactions').insert([{ type: selectedType, category: category, amount: amount, created_at: createdAt }]);
+        await db.from('transactions').insert([{ 
+            type: selectedType, 
+            category: category, 
+            amount: amount, 
+            created_at: new Date(entryDate).toISOString(),
+            user_id: currentUser.id
+        }]);
         
-        resetEntryForm();
+        document.getElementById('amount').value = '';
+        document.getElementById('step-category').classList.remove('active');
+        document.getElementById('step-amount').classList.remove('active');
         loadDashboard();
-        alert(currentLang === 'TA' ? 'வெற்றிகரமாக சேமிக்கப்பட்டது!' : 'Transaction saved successfully!');
+        alert('Transaction saved successfully!');
     }
 
     async function addCategory() {
         const name = document.getElementById('new-cat-name').value;
         const limit = parseFloat(document.getElementById('new-cat-limit').value);
-        if(!name || !limit) return alert("Category Name & Limit enter pannunga!");
+        if(!name || !limit) return alert("Enter Category Name & Limit!");
 
-        await db.from('category_budgets').upsert([{ category_name: name, monthly_limit: limit, is_active: true }], { onConflict: 'category_name' });
+        await db.from('category_budgets').insert([{ 
+            category_name: name, 
+            monthly_limit: limit, 
+            is_active: true,
+            user_id: currentUser.id
+        }]);
+
         document.getElementById('new-cat-name').value = '';
         document.getElementById('new-cat-limit').value = '';
         await loadCategories();
         loadDashboard();
-        alert('Category added successfully!');
-    }
-
-    async function updateLimit(catName, currentLimit) {
-        const newLimit = prompt(`Update Monthly Budget Limit for ${catName}:`, currentLimit);
-        if (newLimit !== null && !isNaN(newLimit) && confirm(`Confirm to change limit for ${catName} to ₹${newLimit}?`)) {
-            await db.from('category_budgets').update({ monthly_limit: parseFloat(newLimit) }).eq('category_name', catName);
-            await loadCategories();
-            loadDashboard();
-        }
-    }
-
-    async function removeCategory(catName) {
-        if(confirm(`Remove "${catName}" category?`)) {
-            await db.from('category_budgets').update({ is_active: false }).eq('category_name', catName);
-            await loadCategories();
-            loadDashboard();
-        }
     }
 
     async function deleteTransaction(id) {
-        if(confirm("Are you sure you want to delete this entry?")) {
+        if(confirm("Delete this entry?")) {
             await db.from('transactions').delete().eq('id', id);
             loadDashboard();
         }
@@ -514,7 +462,6 @@
         document.getElementById('sum-expense').innerText = `₹${totExpense}`;
         document.getElementById('sum-balance').innerText = `₹${totIncome - totExpense}`;
 
-        // Category Allowances Overview Calculations
         let overallLimit = categories.reduce((sum, c) => sum + parseFloat(c.monthly_limit), 0);
         let overallSpent = 0;
 
@@ -530,44 +477,26 @@
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
             overallSpent += catExpenses;
-
             if(catExpenses > 0) {
                 chartLabels.push(c.category_name);
                 chartData.push(catExpenses);
             }
 
             const remBalance = c.monthly_limit - catExpenses;
-            const statusClass = remBalance >= 0 ? 'positive' : 'negative';
-            
             let pct = Math.min(100, Math.round((catExpenses / c.monthly_limit) * 100)) || 0;
             let barColor = pct > 90 ? '#ef4444' : (pct > 70 ? '#f59e0b' : '#10b981');
-
-            const lblLimit = currentLang === 'TA' ? 'வரம்பு' : 'Limit';
-            const lblSpent = currentLang === 'TA' ? 'செலவு' : 'Spent';
-
-            let warningBadge = pct >= 90 ? `<div class="warning-badge">⚠️ LIMIT EXCEEDED</div>` : '';
 
             budgetContainer.innerHTML += `
                 <div class="budget-card">
                     <strong>${c.category_name}</strong>
-                    <span>${lblLimit}: ₹${c.monthly_limit}</span>
-                    <div class="budget-status ${statusClass}">₹${remBalance}</div>
-                    
-                    <div class="progress-bg">
-                        <div class="progress-fill" style="width: ${pct}%; background: ${barColor};"></div>
-                    </div>
-                    <span>${lblSpent}: ₹${catExpenses} (${pct}%)</span>
-                    ${warningBadge}
-
-                    <div class="cat-actions">
-                        <button class="btn-edit" onclick="updateLimit('${c.category_name}', ${c.monthly_limit})">Edit</button>
-                        <button class="btn-danger" onclick="removeCategory('${c.category_name}')">Remove</button>
-                    </div>
+                    <span>Limit: ₹${c.monthly_limit}</span>
+                    <div class="budget-status ${remBalance >= 0 ? 'positive' : 'negative'}">₹${remBalance}</div>
+                    <div class="progress-bg"><div class="progress-fill" style="width: ${pct}%; background: ${barColor};"></div></div>
+                    <span>Spent: ₹${catExpenses} (${pct}%)</span>
                 </div>
             `;
         });
 
-        // Update Total Allowance Header Cards
         document.getElementById('tot-budget-limit').innerText = `₹${overallLimit}`;
         document.getElementById('tot-budget-spent').innerText = `₹${overallSpent}`;
         document.getElementById('tot-budget-left').innerText = `₹${overallLimit - overallSpent}`;
@@ -579,43 +508,24 @@
     function renderChart(labels, data) {
         const ctx = document.getElementById('expenseChart').getContext('2d');
         if (chartInstance) chartInstance.destroy();
-
         if (data.length === 0) return;
 
         chartInstance = new Chart(ctx, {
             type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#a78bfa', '#ec4899', '#6366f1']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } }
-                }
-            }
+            data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#a78bfa'] }] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } } } }
         });
     }
 
     function renderHistory() {
-        const typeFilter = document.getElementById('filter-type').value;
-        const catFilter = document.getElementById('filter-category').value;
         const searchQuery = document.getElementById('search-input').value.toLowerCase();
         const listContainer = document.getElementById('transaction-list');
         
-        let filtered = currentTransactions.filter(t => {
-            let matchType = typeFilter === 'all' || t.type === typeFilter;
-            let matchCat = catFilter === 'all' || t.category === catFilter;
-            let matchSearch = t.category.toLowerCase().includes(searchQuery) || t.amount.toString().includes(searchQuery);
-            return matchType && matchCat && matchSearch;
-        });
+        let filtered = currentTransactions.filter(t => t.category.toLowerCase().includes(searchQuery) || t.amount.toString().includes(searchQuery));
 
         listContainer.innerHTML = '';
         if (filtered.length === 0) {
-            listContainer.innerHTML = `<p style="color:#64748b; text-align:center; padding:10px;">${currentLang === 'TA' ? 'பதிவுகள் எதுவும் இல்லை.' : 'No matching transactions found.'}</p>`;
+            listContainer.innerHTML = `<p style="color:#64748b; text-align:center; padding:10px;">No matching entries found.</p>`;
             return;
         }
 
@@ -627,35 +537,17 @@
                         <strong>${t.category}</strong><br>
                         <span>${new Date(t.created_at).toLocaleDateString()}</span>
                     </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <strong class="${isCredit ? 'amount-credit' : 'amount-debit'}">
-                            ${isCredit ? '+' : '-'}₹${t.amount}
-                        </strong>
-                        <button class="del-btn" onclick="deleteTransaction(${t.id})" title="Delete Entry">🗑️</button>
+                    <div>
+                        <strong class="${isCredit ? 'amount-credit' : 'amount-debit'}">${isCredit ? '+' : '-'}₹${t.amount}</strong>
+                        <button class="del-btn" onclick="deleteTransaction(${t.id})">🗑️</button>
                     </div>
                 </div>
             `;
         });
     }
 
-    function exportToCSV() {
-        if(currentTransactions.length === 0) return alert('No transactions to export!');
-        let csvContent = "data:text/csv;charset=utf-8,Date,Type,Category,Amount\n";
-        currentTransactions.forEach(t => {
-            csvContent += `${new Date(t.created_at).toLocaleDateString()},${t.type},${t.category},${t.amount}\n`;
-        });
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Transactions_${selectedMonth}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    initMonthDropdowns();
-    loadCategories().then(() => loadDashboard());
+    checkUserSession();
 </script>
-
 </body>
 </html>
+
