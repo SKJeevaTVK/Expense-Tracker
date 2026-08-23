@@ -3,31 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Budget & Expense Tracker</title>
+    <title>Smart Expense & Budget Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f1f5f9; padding: 15px; color: #1e293b; }
-        .container { max-width: 500px; margin: 0 auto; }
-        h2 { text-align: center; margin-bottom: 15px; color: #0f172a; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; padding: 20px 10px; color: #f8fafc; }
+        .container { max-width: 520px; margin: 0 auto; }
+        h2 { text-align: center; margin-bottom: 20px; color: #38bdf8; font-size: 24px; text-shadow: 0 0 10px rgba(56,189,248,0.3); }
         
-        .card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        h3 { font-size: 15px; margin-bottom: 10px; color: #334155; }
+        .card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37); }
+        h3 { font-size: 16px; margin-bottom: 14px; color: #93c5fd; display: flex; justify-content: space-between; align-items: center; }
         
-        input, select, button { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
-        button { background: #2563eb; color: #fff; font-weight: bold; border: none; cursor: pointer; }
-        button.btn-danger { background: #dc2626; }
+        label { font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 6px; display: block; }
+        input, select, button { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #334155; border-radius: 10px; outline: none; background: #0f172a; color: #fff; font-size: 14px; }
+        input:focus, select:focus { border-color: #38bdf8; box-shadow: 0 0 8px rgba(56,189,248,0.4); }
         
-        /* Category Budget Cards */
-        .budget-card { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; }
-        .budget-info strong { display: block; font-size: 14px; }
-        .budget-info span { font-size: 11px; color: #64748b; }
-        .budget-status { text-align: right; font-weight: bold; font-size: 14px; }
-        .positive { color: #16a34a; }
-        .negative { color: #dc2626; }
+        button { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; }
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); }
         
-        .list-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        /* Category Grid Cards */
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .budget-card { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 12px; text-align: center; }
+        .budget-card strong { font-size: 14px; color: #f8fafc; display: block; }
+        .budget-card span { font-size: 11px; color: #64748b; }
+        .budget-status { font-weight: bold; font-size: 16px; margin: 6px 0; }
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        .cat-actions { display: flex; gap: 5px; margin-top: 6px; }
+        .cat-actions button { padding: 4px; font-size: 10px; margin: 0; }
+
+        /* Filter Controls */
+        .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        
+        /* Transaction Item */
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; }
         .list-item span { font-size: 11px; color: #64748b; }
+        .amount-credit { color: #4ade80; font-weight: bold; }
+        .amount-debit { color: #f87171; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -35,48 +49,75 @@
 <div class="container">
     <h2>Budget & Expense Tracker</h2>
     
-    <!-- Month Filter -->
+    <!-- Month Selection -->
     <div class="card">
         <label>Select Month History:</label>
         <select id="month-filter" onchange="loadDashboard()"></select>
     </div>
 
-    <!-- Category Budget Allowances -->
+    <!-- Category Allowances -->
     <div class="card">
-        <h3>Category Allowances & Balances</h3>
-        <div id="budget-list">Loading Budgets...</div>
-        <hr style="margin: 10px 0;">
-        <h4>Add / Manage Category</h4>
-        <input type="text" id="new-cat-name" placeholder="Category Name (e.g. Theatre)">
-        <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 500)">
-        <button onclick="addCategory()">Add Category</button>
+        <h3>Category Allowances</h3>
+        <div id="budget-list" class="category-grid">Loading Budgets...</div>
+        
+        <h4 style="font-size:13px; color:#94a3b8; margin: 10px 0 8px;">Add New Allowance Category</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="new-cat-name" placeholder="Name (e.g. Theatre)">
+            <input type="number" id="new-cat-limit" placeholder="Monthly Limit">
+        </div>
+        <button onclick="addCategory()">+ Add Category</button>
     </div>
 
-    <!-- Add Transaction -->
+    <!-- Add Entry Form -->
     <div class="card">
-        <h3>Add Expense / Income</h3>
-        <select id="type">
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
+        <h3>Add Entry</h3>
+        <label>Transaction Type</label>
+        <select id="type" onchange="toggleCategoryInput()">
+            <option value="expense">Expense (Debit)</option>
+            <option value="income">Income (Credit)</option>
         </select>
-        <select id="category-dropdown"></select>
-        <input type="number" id="amount" placeholder="Amount (e.g. 450)">
-        <button onclick="addTransaction()">Save Entry</button>
+        
+        <label>Category / Description</label>
+        <div id="category-input-container">
+            <!-- Dynamic Category Selection / Direct Text -->
+        </div>
+
+        <label>Amount</label>
+        <input type="number" id="amount" placeholder="Amount (e.g. 500)">
+        <button onclick="addTransaction()">Save Transaction</button>
     </div>
 
-    <!-- History -->
+    <!-- History & Filters -->
     <div class="card">
-        <h3>History</h3>
+        <h3>History Filter</h3>
+        <div class="filter-group">
+            <div>
+                <label>Type Filter</label>
+                <select id="filter-type" onchange="renderHistory()">
+                    <option value="all">All Transactions</option>
+                    <option value="income">Credit (Income) Only</option>
+                    <option value="expense">Debit (Expense) Only</option>
+                </select>
+            </div>
+            <div>
+                <label>Category Filter</label>
+                <select id="filter-category" onchange="renderHistory()">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+        </div>
         <div id="transaction-list">Loading...</div>
     </div>
 </div>
 
 <script>
+    // ⚠️ PASTE YOUR SUPABASE DETAILS HERE
     const SUPABASE_URL = 'https://rjinxqbqiypcimtthcbv.supabase.co'; 
     const SUPABASE_KEY = 'sb_publishable_cOp1rCjsTMyShJRMitbsng_jkxpmJ2m'; 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let categories = [];
+    let currentTransactions = [];
 
     function initMonthDropdown() {
         const select = document.getElementById('month-filter');
@@ -94,12 +135,26 @@
     async function loadCategories() {
         const { data } = await db.from('category_budgets').select('*').eq('is_active', true);
         categories = data || [];
+        toggleCategoryInput();
         
-        const dropdown = document.getElementById('category-dropdown');
-        dropdown.innerHTML = '';
+        // Populate History Category Filter
+        const catFilter = document.getElementById('filter-category');
+        catFilter.innerHTML = '<option value="all">All Categories</option>';
         categories.forEach(c => {
-            dropdown.innerHTML += `<option value="${c.category_name}">${c.category_name}</option>`;
+            catFilter.innerHTML += `<option value="${c.category_name}">${c.category_name}</option>`;
         });
+    }
+
+    function toggleCategoryInput() {
+        const type = document.getElementById('type').value;
+        const container = document.getElementById('category-input-container');
+        
+        if (type === 'expense') {
+            let options = categories.map(c => `<option value="${c.category_name}">${c.category_name}</option>`).join('');
+            container.innerHTML = `<select id="category-value">${options}</select>`;
+        } else {
+            container.innerHTML = `<input type="text" id="category-value" placeholder="Type Income Source (e.g. Salary, Bonus)">`;
+        }
     }
 
     async function addCategory() {
@@ -124,7 +179,7 @@
     }
 
     async function removeCategory(catName) {
-        if(confirm(`Remove "${catName}" category? (Previous month transaction data will stay safe)`)) {
+        if(confirm(`Remove "${catName}" category? (Previous transaction data will stay safe in Database)`)) {
             await db.from('category_budgets').update({ is_active: false }).eq('category_name', catName);
             await loadCategories();
             loadDashboard();
@@ -136,52 +191,65 @@
         const startDate = `${selectedMonth}-01T00:00:00.000Z`;
         const endDate = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0, 23, 59, 59).toISOString();
 
-        // Fetch transactions for selected month
         const { data: transactions } = await db.from('transactions').select('*').gte('created_at', startDate).lte('created_at', endDate);
+        currentTransactions = transactions || [];
 
-        // Calculate Category Balances
+        // Category Budget Calculations
         const budgetContainer = document.getElementById('budget-list');
         budgetContainer.innerHTML = '';
 
         categories.forEach(c => {
-            const catExpenses = transactions
+            const catExpenses = currentTransactions
                 .filter(t => t.category === c.category_name && t.type === 'expense')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
-            const catIncome = transactions
-                .filter(t => t.category === c.category_name && t.type === 'income')
-                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-
-            const remBalance = (c.monthly_limit + catIncome) - catExpenses;
+            const remBalance = c.monthly_limit - catExpenses;
             const statusClass = remBalance >= 0 ? 'positive' : 'negative';
 
             budgetContainer.innerHTML += `
                 <div class="budget-card">
-                    <div class="budget-info">
-                        <strong>${c.category_name}</strong>
-                        <span>Limit: ₹${c.monthly_limit} | Spent: ₹${catExpenses}</span>
-                    </div>
-                    <div>
-                        <div class="budget-status ${statusClass}">₹${remBalance}</div>
-                        <button style="padding:2px 5px; font-size:10px; width:auto;" onclick="updateLimit('${c.category_name}', ${c.monthly_limit})">Edit</button>
-                        <button style="padding:2px 5px; font-size:10px; width:auto;" class="btn-danger" onclick="removeCategory('${c.category_name}')">Remove</button>
+                    <strong>${c.category_name}</strong>
+                    <span>Limit: ₹${c.monthly_limit}</span>
+                    <div class="budget-status ${statusClass}">₹${remBalance}</div>
+                    <span>Spent: ₹${catExpenses}</span>
+                    <div class="cat-actions">
+                        <button class="btn-edit" onclick="updateLimit('${c.category_name}', ${c.monthly_limit})">Edit</button>
+                        <button class="btn-danger" onclick="removeCategory('${c.category_name}')">Remove</button>
                     </div>
                 </div>
             `;
         });
 
-        // Load History
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const typeFilter = document.getElementById('filter-type').value;
+        const catFilter = document.getElementById('filter-category').value;
         const listContainer = document.getElementById('transaction-list');
+        
+        let filtered = currentTransactions.filter(t => {
+            let matchType = typeFilter === 'all' || t.type === typeFilter;
+            let matchCat = catFilter === 'all' || t.category === catFilter;
+            return matchType && matchCat;
+        });
+
         listContainer.innerHTML = '';
-        (transactions || []).forEach(t => {
+        if (filtered.length === 0) {
+            listContainer.innerHTML = '<p style="color:#64748b; text-align:center; padding:10px;">No matching transactions found.</p>';
+            return;
+        }
+
+        filtered.forEach(t => {
+            const isCredit = t.type === 'income';
             listContainer.innerHTML += `
                 <div class="list-item">
                     <div>
                         <strong>${t.category}</strong><br>
                         <span>${new Date(t.created_at).toLocaleDateString()}</span>
                     </div>
-                    <strong style="color: ${t.type === 'income' ? 'green' : 'red'};">
-                        ${t.type === 'income' ? '+' : '-'}₹${t.amount}
+                    <strong class="${isCredit ? 'amount-credit' : 'amount-debit'}">
+                        ${isCredit ? '+' : '-'}₹${t.amount}
                     </strong>
                 </div>
             `;
@@ -190,13 +258,15 @@
 
     async function addTransaction() {
         const type = document.getElementById('type').value;
-        const category = document.getElementById('category-dropdown').value;
+        const categoryInput = document.getElementById('category-value');
+        const category = categoryInput ? categoryInput.value : 'General';
         const amount = parseFloat(document.getElementById('amount').value);
 
-        if(!amount) return alert('Enter amount!');
+        if(!amount || !category) return alert('Enter valid Category and Amount!');
 
         await db.from('transactions').insert([{ type, category, amount }]);
         document.getElementById('amount').value = '';
+        if(type === 'income') categoryInput.value = '';
         loadDashboard();
     }
 
