@@ -3,195 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker Dashboard</title>
-    <!-- Supabase Library -->
+    <title>Smart Budget & Expense Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f1f5f9; padding: 20px; color: #1e293b; }
+        body { background-color: #f1f5f9; padding: 15px; color: #1e293b; }
         .container { max-width: 500px; margin: 0 auto; }
-        h2 { text-align: center; margin-bottom: 20px; color: #0f172a; }
+        h2 { text-align: center; margin-bottom: 15px; color: #0f172a; }
         
-        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .card.full { grid-column: span 2; text-align: center; background: #2563eb; color: #fff; }
-        .card h4 { font-size: 11px; text-transform: uppercase; opacity: 0.9; margin-bottom: 6px; }
-        .card p { font-size: 22px; font-weight: bold; }
-        .income { color: #16a34a; }
-        .expense { color: #dc2626; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        h3 { font-size: 15px; margin-bottom: 10px; color: #334155; }
         
-        .filter-section, .form-card, .history { background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        label { font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 5px; display: block; }
-        input, select, button { width: 100%; padding: 11px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-size: 14px; }
+        input, select, button { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
         button { background: #2563eb; color: #fff; font-weight: bold; border: none; cursor: pointer; }
+        button.btn-danger { background: #dc2626; }
         
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-        .item-details strong { font-size: 14px; display: block; }
-        .item-details span { font-size: 11px; color: #94a3b8; }
-        .amount-tag { font-weight: bold; font-size: 15px; }
+        /* Category Budget Cards */
+        .budget-card { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; }
+        .budget-info strong { display: block; font-size: 14px; }
+        .budget-info span { font-size: 11px; color: #64748b; }
+        .budget-status { text-align: right; font-weight: bold; font-size: 14px; }
+        .positive { color: #16a34a; }
+        .negative { color: #dc2626; }
+        
+        .list-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        .list-item span { font-size: 11px; color: #64748b; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Expense Tracker</h2>
+    <h2>Budget & Expense Tracker</h2>
     
-    <!-- Month Dropdown -->
-    <div class="filter-section">
-        <label for="month-filter">Select Month History:</label>
-        <select id="month-filter" onchange="fetchTransactions()">
-        </select>
+    <!-- Month Filter -->
+    <div class="card">
+        <label>Select Month History:</label>
+        <select id="month-filter" onchange="loadDashboard()"></select>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="card-grid">
-        <div class="card full">
-            <h4>Monthly Balance</h4>
-            <p id="balance">₹0</p>
-        </div>
-        <div class="card">
-            <h4>Income</h4>
-            <p id="income" class="income">₹0</p>
-        </div>
-        <div class="card">
-            <h4>Expense</h4>
-            <p id="expense" class="expense">₹0</p>
-        </div>
+    <!-- Category Budget Allowances -->
+    <div class="card">
+        <h3>Category Allowances & Balances</h3>
+        <div id="budget-list">Loading Budgets...</div>
+        <hr style="margin: 10px 0;">
+        <h4>Add / Manage Category</h4>
+        <input type="text" id="new-cat-name" placeholder="Category Name (e.g. Theatre)">
+        <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 500)">
+        <button onclick="addCategory()">Add Category</button>
     </div>
 
-    <!-- Add Entry Form -->
-    <div class="form-card">
-        <h3>Add New Entry</h3>
+    <!-- Add Transaction -->
+    <div class="card">
+        <h3>Add Expense / Income</h3>
         <select id="type">
             <option value="expense">Expense</option>
             <option value="income">Income</option>
         </select>
-        <input type="number" id="amount" placeholder="Amount (e.g. 500)">
-        <input type="text" id="category" placeholder="Category (e.g. Food, Travel)">
+        <select id="category-dropdown"></select>
+        <input type="number" id="amount" placeholder="Amount (e.g. 450)">
         <button onclick="addTransaction()">Save Entry</button>
     </div>
 
     <!-- History -->
-    <div class="history">
-        <h3>Filtered History</h3>
+    <div class="card">
+        <h3>History</h3>
         <div id="transaction-list">Loading...</div>
     </div>
 </div>
 
 <script>
-    // ⚠️ INGA UNGA SUPABASE DETAILS PASTE PANNUNGA:
     const SUPABASE_URL = 'https://rjinxqbqiypcimtthcbv.supabase.co'; 
-    const SUPABASE_KEY = 'sb_publishable_cOp1rCjsTMyShJRMitbsng_jkxpmJ2m';           
-    
+    const SUPABASE_KEY = 'sb_publishable_cOp1rCjsTMyShJRMitbsng_jkxpmJ2m'; 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Month Dropdown Setup
+    let categories = [];
+
     function initMonthDropdown() {
         const select = document.getElementById('month-filter');
         const currentDate = new Date();
-        
         for (let i = 0; i < 12; i++) {
             const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-            const monthVal = date.toISOString().slice(0, 7); 
+            const monthVal = date.toISOString().slice(0, 7);
             const monthText = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-            
             const opt = document.createElement('option');
-            opt.value = monthVal;
-            opt.innerText = monthText;
+            opt.value = monthVal; opt.innerText = monthText;
             select.appendChild(opt);
         }
     }
 
-    // Load Filtered Data
-    async function fetchTransactions() {
+    async function loadCategories() {
+        const { data } = await db.from('category_budgets').select('*').eq('is_active', true);
+        categories = data || [];
+        
+        const dropdown = document.getElementById('category-dropdown');
+        dropdown.innerHTML = '';
+        categories.forEach(c => {
+            dropdown.innerHTML += `<option value="${c.category_name}">${c.category_name}</option>`;
+        });
+    }
+
+    async function addCategory() {
+        const name = document.getElementById('new-cat-name').value;
+        const limit = parseFloat(document.getElementById('new-cat-limit').value);
+        if(!name || !limit) return alert("Category Name and Limit Enter Pannunga!");
+
+        await db.from('category_budgets').upsert([{ category_name: name, monthly_limit: limit, is_active: true }], { onConflict: 'category_name' });
+        document.getElementById('new-cat-name').value = '';
+        document.getElementById('new-cat-limit').value = '';
+        await loadCategories();
+        loadDashboard();
+    }
+
+    async function updateLimit(catName, currentLimit) {
+        const newLimit = prompt(`Update Monthly Budget Limit for ${catName}:`, currentLimit);
+        if (newLimit !== null && !isNaN(newLimit) && confirm(`Confirm to change limit for ${catName} to ₹${newLimit}?`)) {
+            await db.from('category_budgets').update({ monthly_limit: parseFloat(newLimit) }).eq('category_name', catName);
+            await loadCategories();
+            loadDashboard();
+        }
+    }
+
+    async function removeCategory(catName) {
+        if(confirm(`Remove "${catName}" category? (Previous month transaction data will stay safe)`)) {
+            await db.from('category_budgets').update({ is_active: false }).eq('category_name', catName);
+            await loadCategories();
+            loadDashboard();
+        }
+    }
+
+    async function loadDashboard() {
         const selectedMonth = document.getElementById('month-filter').value;
         const startDate = `${selectedMonth}-01T00:00:00.000Z`;
         const endDate = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0, 23, 59, 59).toISOString();
 
-        const { data, error } = await db
-            .from('transactions')
-            .select('*')
-            .gte('created_at', startDate)
-            .lte('created_at', endDate)
-            .order('created_at', { ascending: false });
+        // Fetch transactions for selected month
+        const { data: transactions } = await db.from('transactions').select('*').gte('created_at', startDate).lte('created_at', endDate);
 
-        if (error) {
-            document.getElementById('transaction-list').innerText = 'Data load aagala!';
-            return;
-        }
+        // Calculate Category Balances
+        const budgetContainer = document.getElementById('budget-list');
+        budgetContainer.innerHTML = '';
 
-        updateUI(data);
-    }
+        categories.forEach(c => {
+            const catExpenses = transactions
+                .filter(t => t.category === c.category_name && t.type === 'expense')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
-    // Add New Entry
-    async function addTransaction() {
-        const type = document.getElementById('type').value;
-        const amount = parseFloat(document.getElementById('amount').value);
-        const category = document.getElementById('category').value;
+            const catIncome = transactions
+                .filter(t => t.category === c.category_name && t.type === 'income')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
-        if (!amount || !category) {
-            alert('Amount and Category enter pannunga!');
-            return;
-        }
+            const remBalance = (c.monthly_limit + catIncome) - catExpenses;
+            const statusClass = remBalance >= 0 ? 'positive' : 'negative';
 
-        const { error } = await db
-            .from('transactions')
-            .insert([{ type, amount, category }]);
-
-        if (error) {
-            alert('Error: ' + error.message);
-        } else {
-            document.getElementById('amount').value = '';
-            document.getElementById('category').value = '';
-            fetchTransactions();
-        }
-    }
-
-    // Update UI
-    function updateUI(transactions) {
-        const list = document.getElementById('transaction-list');
-        list.innerHTML = '';
-
-        if (transactions.length === 0) {
-            list.innerHTML = '<p style="color:#888; text-align:center; padding: 10px;">No records for this month.</p>';
-            document.getElementById('income').innerText = '₹0';
-            document.getElementById('expense').innerText = '₹0';
-            document.getElementById('balance').innerText = '₹0';
-            return;
-        }
-
-        let totalIncome = 0;
-        let totalExpense = 0;
-
-        transactions.forEach(t => {
-            const val = parseFloat(t.amount);
-            if (t.type === 'income') totalIncome += val;
-            if (t.type === 'expense') totalExpense += val;
-
-            const dateObj = new Date(t.created_at);
-            const dateStr = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-
-            const item = document.createElement('div');
-            item.className = 'list-item';
-            item.innerHTML = `
-                <div class="item-details">
-                    <strong>${t.category}</strong>
-                    <span>${dateStr}</span>
+            budgetContainer.innerHTML += `
+                <div class="budget-card">
+                    <div class="budget-info">
+                        <strong>${c.category_name}</strong>
+                        <span>Limit: ₹${c.monthly_limit} | Spent: ₹${catExpenses}</span>
+                    </div>
+                    <div>
+                        <div class="budget-status ${statusClass}">₹${remBalance}</div>
+                        <button style="padding:2px 5px; font-size:10px; width:auto;" onclick="updateLimit('${c.category_name}', ${c.monthly_limit})">Edit</button>
+                        <button style="padding:2px 5px; font-size:10px; width:auto;" class="btn-danger" onclick="removeCategory('${c.category_name}')">Remove</button>
+                    </div>
                 </div>
-                <span class="amount-tag ${t.type}">
-                    ${t.type === 'income' ? '+' : '-'}₹${val}
-                </span>
             `;
-            list.appendChild(item);
         });
 
-        document.getElementById('income').innerText = `₹${totalIncome}`;
-        document.getElementById('expense').innerText = `₹${totalExpense}`;
-        document.getElementById('balance').innerText = `₹${totalIncome - totalExpense}`;
+        // Load History
+        const listContainer = document.getElementById('transaction-list');
+        listContainer.innerHTML = '';
+        (transactions || []).forEach(t => {
+            listContainer.innerHTML += `
+                <div class="list-item">
+                    <div>
+                        <strong>${t.category}</strong><br>
+                        <span>${new Date(t.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <strong style="color: ${t.type === 'income' ? 'green' : 'red'};">
+                        ${t.type === 'income' ? '+' : '-'}₹${t.amount}
+                    </strong>
+                </div>
+            `;
+        });
+    }
+
+    async function addTransaction() {
+        const type = document.getElementById('type').value;
+        const category = document.getElementById('category-dropdown').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        if(!amount) return alert('Enter amount!');
+
+        await db.from('transactions').insert([{ type, category, amount }]);
+        document.getElementById('amount').value = '';
+        loadDashboard();
     }
 
     initMonthDropdown();
-    fetchTransactions();
+    loadCategories().then(() => loadDashboard());
 </script>
 
 </body>
