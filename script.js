@@ -19,7 +19,7 @@ let selectedCategory = null;
 let chartInstance = null;
 let currentLang = 'en';
 
-// TRANSLATION DICTIONARY (ENGLISH & TAMIL)
+// TRANSLATION DICTIONARY
 const translations = {
     en: {
         auth_login_title: "Login to Your Account",
@@ -63,13 +63,18 @@ const translations = {
         btn_add_cat: "+ Add Category",
         lang_settings_title: "🌐 Language / மொழி",
         select_lang_label: "Select Application Language:",
-        theme_settings_title: "🎨 App Theme (12 Variations)",
-        select_theme_label: "Choose Visual Style:",
+        theme_settings_title: "🎨 App Theme",
+        security_title: "🔒 Security Options",
+        btn_go_to_change_pass: "🔑 Change Password",
+        btn_back_to_settings: "⬅️ Back to Settings",
         change_pass_title: "🔒 Change Password",
         old_pass_label: "Old Password",
         new_pass_label: "New Password",
         confirm_new_pass_label: "Confirm New Password",
-        btn_update_pass: "Update Password"
+        btn_update_pass: "Update Password",
+        btn_how_to_use: "How to Use",
+        help_title: "📖 How to Use the App",
+        btn_close: "Close"
     },
     ta: {
         auth_login_title: "உங்கள் கணக்கில் நுழையவும்",
@@ -113,17 +118,43 @@ const translations = {
         btn_add_cat: "+ வகையைச் சேர்க்கவும்",
         lang_settings_title: "🌐 Language / மொழி",
         select_lang_label: "பயன்பாட்டு மொழியைத் தேர்ந்தெடுக்கவும்:",
-        theme_settings_title: "🎨 பயன்பாட்டு தீம் (12 விருப்பங்கள்)",
-        select_theme_label: "வடிவமைப்பைத் தேர்ந்தெடுக்கவும்:",
+        theme_settings_title: "🎨 பயன்பாட்டு தீம்",
+        security_title: "🔒 பாதுகாப்பு அமைப்புகள்",
+        btn_go_to_change_pass: "🔑 கடவுச்சொல்லை மாற்றவும்",
+        btn_back_to_settings: "⬅️ செட்டிங்ஸுக்குத் திரும்புக",
         change_pass_title: "🔒 கடவுச்சொல்லை மாற்றவும்",
         old_pass_label: "பழைய கடவுச்சொல்",
         new_pass_label: "புதிய கடவுச்சொல்",
         confirm_new_pass_label: "புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்",
-        btn_update_pass: "கடவுச்சொல்லை புதுப்பிக்கவும்"
+        btn_update_pass: "கடவுச்சொல்லை புதுப்பிக்கவும்",
+        btn_how_to_use: "எப்படி பயன்படுத்துவது?",
+        help_title: "📖 பயன்பாட்டு வழிகாட்டி",
+        btn_close: "மூடுக"
     }
 };
 
-// 1. LANGUAGE SWITCHER FUNCTIONALITY
+// 1. SPLASH SCREEN & CASH ANIMATION
+function createCashAnimation() {
+    const container = document.getElementById('cash-container');
+    const items = ['💵', '🪙', '💰', '💸', '₹'];
+    for (let i = 0; i < 25; i++) {
+        const cash = document.createElement('div');
+        cash.className = 'cash-item';
+        cash.innerText = items[Math.floor(Math.random() * items.length)];
+        cash.style.left = Math.random() * 100 + '%';
+        cash.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        cash.style.animationDelay = (Math.random() * 1.5) + 's';
+        container.appendChild(cash);
+    }
+}
+createCashAnimation();
+
+setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) splash.style.display = 'none';
+}, 3000);
+
+// 2. LANGUAGE SWITCHER
 function changeLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('user_lang', lang);
@@ -138,7 +169,7 @@ function changeLanguage(lang) {
     });
 }
 
-// 2. THEME SWITCHER FUNCTIONALITY (12 THEMES)
+// 3. THEME SWITCHER
 function changeTheme(themeName) {
     document.body.className = themeName;
     localStorage.setItem('user_theme', themeName);
@@ -146,28 +177,19 @@ function changeTheme(themeName) {
     if (themeSel) themeSel.value = themeName;
 }
 
-// Load Saved Theme and Language on Startup
 const savedTheme = localStorage.getItem('user_theme') || 'theme-slate';
 changeTheme(savedTheme);
 
 const savedLang = localStorage.getItem('user_lang') || 'en';
 changeLanguage(savedLang);
 
-// Splash Screen Removal
-setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    if (splash) {
-        splash.style.display = 'none';
-    }
-}, 3000);
-
-// REAL-TIME AUTH STATE OBSERVER (FIXES STUCK LOGIN ISSUE)
+// 4. REAL-TIME AUTH STATE OBSERVER
 if (db) {
     db.auth.onAuthStateChange(async (event, session) => {
         if (session) {
             currentUser = session.user;
-            document.getElementById('btn-logout').style.display = 'block';
-            document.getElementById('btn-settings').style.display = 'block';
+            document.getElementById('btn-logout').style.display = 'inline-block';
+            document.getElementById('btn-settings').style.display = 'inline-block';
             showPage('page-dashboard');
             initMonthDropdowns();
             await setupDefaultCategoriesForNewUser();
@@ -184,7 +206,6 @@ if (db) {
 
 async function setupDefaultCategoriesForNewUser() {
     if (!currentUser) return;
-    
     const { data } = await db.from('category_budgets').select('*').eq('user_id', currentUser.id);
     
     if (!data || data.length === 0) {
@@ -192,13 +213,67 @@ async function setupDefaultCategoriesForNewUser() {
             { category_name: '🍔 Food & Snacks', monthly_limit: 3000, is_active: true, user_id: currentUser.id },
             { category_name: '🏠 Rent & Bills', monthly_limit: 5000, is_active: true, user_id: currentUser.id },
             { category_name: '🚗 Travel & Fuel', monthly_limit: 2000, is_active: true, user_id: currentUser.id },
-            { category_name: '🛍️ Shopping', monthly_limit: 2500, is_active: true, user_id: currentUser.id },
-            { category_name: '🎬 Entertainment', monthly_limit: 1500, is_active: true, user_id: currentUser.id }
+            { category_name: '🛍️ Shopping', monthly_limit: 2500, is_active: true, user_id: currentUser.id }
         ];
         await db.from('category_budgets').insert(defaultCategories);
     }
 }
 
+// 5. EDIT & DELETE CATEGORIES LOGIC
+async function editCategory(id, currentName, currentLimit) {
+    const newName = prompt("Edit Category Name:", currentName);
+    if (!newName) return;
+    
+    const newLimit = prompt("Edit Monthly Limit (₹):", currentLimit);
+    if (!newLimit || isNaN(newLimit)) return;
+
+    await db.from('category_budgets').update({
+        category_name: newName,
+        monthly_limit: parseFloat(newLimit)
+    }).eq('id', id);
+
+    await loadCategories();
+    loadDashboard();
+}
+
+async function deleteCategory(id) {
+    if (confirm("Are you sure you want to delete this Category?")) {
+        await db.from('category_budgets').delete().eq('id', id);
+        await loadCategories();
+        loadDashboard();
+    }
+}
+
+// 6. HOW TO USE MODAL LOGIC
+function openHelpModal() {
+    const helpBody = document.getElementById('help-body');
+    if (currentLang === 'ta') {
+        helpBody.innerHTML = `
+            <ol style="padding-left: 20px; line-height: 1.6; color:#cbd5e1;">
+                <li><b>பரிவர்த்தனை சேர்க்க:</b> Debit (செலவு) அல்லது Credit (வரவு) பட்டனை தேர்ந்தெடுக்கவும்.</li>
+                <li><b>வகை தேர்வு:</b> பட்டியலிலிருந்து பொருத்தமான வகையை தேர்ந்தெடுக்கவும்.</li>
+                <li><b>சேமிக்க:</b> தொகையை உள்ளிட்டு 'Save Transaction' பட்டனை அழுத்தவும்.</li>
+                <li><b>வரம்புகள் திருத்த:</b> 'Manage Category Allowances' பக்கம் சென்று எடிட் (✏️) அல்லது டெலிட் (🗑️) செய்யலாம்.</li>
+            </ol>
+        `;
+    } else {
+        helpBody.innerHTML = `
+            <ol style="padding-left: 20px; line-height: 1.6; color:#cbd5e1;">
+                <li><b>Add Entry:</b> Select Debit (Expense) or Credit (Income).</li>
+                <li><b>Category:</b> Choose a category from the grid.</li>
+                <li><b>Save:</b> Enter the amount & date, then click 'Save Transaction'.</li>
+                <li><b>Manage Budgets:</b> Go to 'Manage Category Allowances' to Edit (✏️) or Delete (🗑️) limit entries.</li>
+            </ol>
+        `;
+    }
+    document.getElementById('help-modal').style.display = 'flex';
+}
+
+function closeHelpModal() {
+    document.getElementById('help-modal').style.display = 'none';
+}
+
+// AUTHENTICATION AND NAVIGATION
 async function handleGoogleLogin() {
     if (!db) return alert("Database connection missing!");
     const { error } = await db.auth.signInWithOAuth({
@@ -218,28 +293,20 @@ function toggleAuthMode(mode) {
     document.getElementById('link-login').style.display = mode !== 'login' ? 'block' : 'none';
 
     if (mode === 'login') {
-        passwordInput.style.display = 'block';
-        passwordInput.required = true;
-        confirmPasswordInput.style.display = 'none';
-        confirmPasswordInput.required = false;
+        passwordInput.style.display = 'block'; passwordInput.required = true;
+        confirmPasswordInput.style.display = 'none'; confirmPasswordInput.required = false;
     } else if (mode === 'signup') {
-        passwordInput.style.display = 'block';
-        passwordInput.required = true;
-        confirmPasswordInput.style.display = 'block';
-        confirmPasswordInput.required = true;
+        passwordInput.style.display = 'block'; passwordInput.required = true;
+        confirmPasswordInput.style.display = 'block'; confirmPasswordInput.required = true;
     } else if (mode === 'forgot') {
-        passwordInput.style.display = 'none';
-        passwordInput.required = false;
-        confirmPasswordInput.style.display = 'none';
-        confirmPasswordInput.required = false;
+        passwordInput.style.display = 'none'; passwordInput.required = false;
+        confirmPasswordInput.style.display = 'none'; confirmPasswordInput.required = false;
     }
-
     changeLanguage(currentLang);
 }
 
 async function handleAuthSubmit(event) {
     if (event) event.preventDefault();
-    
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
     const confirmPassword = document.getElementById('auth-confirm-password').value;
@@ -248,25 +315,19 @@ async function handleAuthSubmit(event) {
 
     try {
         if (authMode === 'login') {
-            const { data, error } = await db.auth.signInWithPassword({ email, password });
+            const { error } = await db.auth.signInWithPassword({ email, password });
             if (error) return alert(error.message);
-            // onAuthStateChange handle பண்ணி Dashboard-க்கு கூட்டிட்டு போகும்
         } else if (authMode === 'signup') {
-            if (password !== confirmPassword) {
-                return alert('Error: Password and Re-entered Password do not match!');
-            }
-            if (password.length < 6) {
-                return alert('Password must be at least 6 characters long!');
-            }
-
-            const { data, error } = await db.auth.signUp({ email, password });
+            if (password !== confirmPassword) return alert('Password mismatch!');
+            if (password.length < 6) return alert('Password must be at least 6 characters!');
+            const { error } = await db.auth.signUp({ email, password });
             if (error) return alert(error.message);
-            alert('Account created! Verification link sent to your Email.');
+            alert('Account created! Verification link sent to Email.');
             toggleAuthMode('login');
         } else if (authMode === 'forgot') {
             const { error } = await db.auth.resetPasswordForEmail(email);
             if (error) return alert(error.message);
-            alert('Password Reset Link has been sent to your Email!');
+            alert('Password Reset Link sent to your Email!');
             toggleAuthMode('login');
         }
     } catch(err) {
@@ -274,46 +335,31 @@ async function handleAuthSubmit(event) {
     }
 }
 
-// 3. CHANGE PASSWORD LOGIC
 async function handlePasswordChange(event) {
     event.preventDefault();
-
     const oldPassword = document.getElementById('old-password').value;
     const newPassword = document.getElementById('new-password').value;
     const confirmNewPassword = document.getElementById('confirm-new-password').value;
 
-    if (newPassword !== confirmNewPassword) {
-        return alert("New password and confirm password do not match!");
-    }
-
-    if (newPassword.length < 6) {
-        return alert("Password must be at least 6 characters long!");
-    }
+    if (newPassword !== confirmNewPassword) return alert("Passwords do not match!");
+    if (newPassword.length < 6) return alert("Password must be at least 6 characters!");
 
     try {
         const { error: signInError } = await db.auth.signInWithPassword({
-            email: currentUser.email,
-            password: oldPassword
+            email: currentUser.email, password: oldPassword
         });
-
-        if (signInError) {
-            return alert("Incorrect Old Password!");
-        }
+        if (signInError) return alert("Incorrect Old Password!");
 
         const { error: updateError } = await db.auth.updateUser({ password: newPassword });
-
-        if (updateError) {
-            return alert(updateError.message);
-        }
+        if (updateError) return alert(updateError.message);
 
         alert("Password updated successfully!");
         document.getElementById('old-password').value = '';
         document.getElementById('new-password').value = '';
         document.getElementById('confirm-new-password').value = '';
-        showPage('page-dashboard');
-
+        showPage('page-settings');
     } catch (err) {
-        alert("Error updating password: " + err.message);
+        alert("Error: " + err.message);
     }
 }
 
@@ -332,9 +378,7 @@ function initMonthDropdowns() {
     const histSelect = document.getElementById('month-filter-hist');
     if (!dashSelect || !histSelect) return;
     
-    dashSelect.innerHTML = '';
-    histSelect.innerHTML = '';
-
+    dashSelect.innerHTML = ''; histSelect.innerHTML = '';
     const currentDate = new Date();
     for (let i = 0; i < 12; i++) {
         const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
@@ -413,7 +457,6 @@ function selectCategory(catName, btnElement) {
     } else {
         document.getElementById('custom-cat-container').style.display = 'none';
     }
-
     document.getElementById('step-amount').classList.add('active');
 }
 
@@ -426,14 +469,11 @@ async function addTransaction() {
     const amount = parseFloat(document.getElementById('amount').value);
     const entryDate = document.getElementById('entry-date').value;
 
-    if (!amount || !category || !entryDate) return alert('Enter valid Date, Category and Amount!');
+    if (!amount || !category || !entryDate) return alert('Enter valid Details!');
 
     await db.from('transactions').insert([{ 
-        type: selectedType, 
-        category: category, 
-        amount: amount, 
-        created_at: new Date(entryDate).toISOString(),
-        user_id: currentUser.id
+        type: selectedType, category: category, amount: amount, 
+        created_at: new Date(entryDate).toISOString(), user_id: currentUser.id
     }]);
     
     document.getElementById('amount').value = '';
@@ -449,10 +489,7 @@ async function addCategory() {
     if(!name || !limit) return alert("Enter Category Name & Limit!");
 
     await db.from('category_budgets').insert([{ 
-        category_name: name, 
-        monthly_limit: limit, 
-        is_active: true,
-        user_id: currentUser.id
+        category_name: name, monthly_limit: limit, is_active: true, user_id: currentUser.id
     }]);
 
     document.getElementById('new-cat-name').value = '';
@@ -509,7 +546,13 @@ async function loadDashboard() {
 
         budgetContainer.innerHTML += `
             <div class="budget-card">
-                <strong>${c.category_name}</strong>
+                <div class="budget-header">
+                    <strong>${c.category_name}</strong>
+                    <div class="budget-actions">
+                        <button type="button" onclick="editCategory(${c.id}, '${c.category_name}', ${c.monthly_limit})">✏️</button>
+                        <button type="button" onclick="deleteCategory(${c.id})">🗑️</button>
+                    </div>
+                </div>
                 <span>Limit: ₹${c.monthly_limit}</span>
                 <div class="budget-status ${remBalance >= 0 ? 'positive' : 'negative'}">₹${remBalance}</div>
                 <div class="progress-bg"><div class="progress-fill" style="width: ${pct}%; background: ${barColor};"></div></div>
@@ -533,7 +576,7 @@ function renderChart(labels, data) {
 
     chartInstance = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#a78bfa', '#00e676', '#ffd700'] }] },
+        data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#a78bfa', '#00e676'] }] },
         options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } } } }
     });
 }
