@@ -1,4 +1,4 @@
-/* THEME VARIABLES SYSTEM (10 THEMES) */
+/* THEME VARIABLES SYSTEM (12 THEMES) */
 :root {
     --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
     --card-bg: rgba(30, 41, 59, 0.7);
@@ -10,7 +10,7 @@
     --input-bg: #0f172a;
 }
 
-/* 10 DISTINCT THEME PRESETS */
+/* 12 DISTINCT THEME PRESETS */
 body.theme-slate { --bg-gradient: linear-gradient(135deg, #0f172a, #1e1b4b); --accent-blue: #38bdf8; }
 body.theme-cyberpunk { --bg-gradient: linear-gradient(135deg, #180126, #3b0034); --accent-blue: #ff007f; --card-bg: rgba(45, 0, 50, 0.8); }
 body.theme-emerald { --bg-gradient: linear-gradient(135deg, #062c20, #022015); --accent-blue: #34d399; --btn-primary: linear-gradient(135deg, #059669, #047857); }
@@ -21,6 +21,8 @@ body.theme-rosegold { --bg-gradient: linear-gradient(135deg, #2a1820, #1c0d14); 
 body.theme-coffee { --bg-gradient: linear-gradient(135deg, #261c14, #18100a); --accent-blue: #d97706; --btn-primary: linear-gradient(135deg, #b45309, #78350f); }
 body.theme-crimson { --bg-gradient: linear-gradient(135deg, #280a11, #180307); --accent-blue: #f87171; --btn-primary: linear-gradient(135deg, #dc2626, #b91c1c); }
 body.theme-midnight { --bg-gradient: linear-gradient(135deg, #020617, #0f172a); --accent-blue: #60a5fa; }
+body.theme-neonmint { --bg-gradient: linear-gradient(135deg, #002b20, #004d40); --accent-blue: #00e676; --btn-primary: linear-gradient(135deg, #00b0ff, #0081cb); }
+body.theme-gold { --bg-gradient: linear-gradient(135deg, #2c2200, #443400); --accent-blue: #ffd700; --btn-primary: linear-gradient(135deg, #d4af37, #aa8c2c); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
 body { background: var(--bg-gradient); min-height: 100vh; padding: 20px 10px; color: var(--text-main); transition: all 0.4s ease; }
@@ -58,9 +60,9 @@ body { background: var(--bg-gradient); min-height: 100vh; padding: 20px 10px; co
 h2 { color: var(--accent-blue); font-size: 22px; margin: 0; }
 
 .header-actions { display: flex; gap: 8px; align-items: center; }
-.theme-select { width: auto; padding: 6px 10px; margin: 0; font-size: 12px; border-radius: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; }
 
 .btn-sm { width: auto; padding: 6px 12px; margin: 0; font-size: 12px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
+.btn-icon { background: rgba(255,255,255,0.1); font-size: 14px; padding: 6px 10px; }
 .btn-logout { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
 
 .card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37); }
