@@ -63,7 +63,7 @@ const translations = {
         btn_add_cat: "+ Add Category",
         lang_settings_title: "🌐 Language / மொழி",
         select_lang_label: "Select Application Language:",
-        theme_settings_title: "🎨 App Theme",
+        theme_settings_title: "🎨 App Theme (12 Variations)",
         security_title: "🔒 Security Options",
         btn_go_to_change_pass: "🔑 Change Password",
         btn_back_to_settings: "⬅️ Back to Settings",
@@ -72,7 +72,7 @@ const translations = {
         new_pass_label: "New Password",
         confirm_new_pass_label: "Confirm New Password",
         btn_update_pass: "Update Password",
-        btn_how_to_use: "How to Use",
+        btn_how_to_use: "How to Use App Guide",
         help_title: "📖 How to Use the App",
         btn_close: "Close"
     },
@@ -118,7 +118,7 @@ const translations = {
         btn_add_cat: "+ வகையைச் சேர்க்கவும்",
         lang_settings_title: "🌐 Language / மொழி",
         select_lang_label: "பயன்பாட்டு மொழியைத் தேர்ந்தெடுக்கவும்:",
-        theme_settings_title: "🎨 பயன்பாட்டு தீம்",
+        theme_settings_title: "🎨 பயன்பாட்டு தீம் (12 விருப்பங்கள்)",
         security_title: "🔒 பாதுகாப்பு அமைப்புகள்",
         btn_go_to_change_pass: "🔑 கடவுச்சொல்லை மாற்றவும்",
         btn_back_to_settings: "⬅️ செட்டிங்ஸுக்குத் திரும்புக",
@@ -137,7 +137,7 @@ const translations = {
 function createCashAnimation() {
     const container = document.getElementById('cash-container');
     const items = ['💵', '🪙', '💰', '💸', '₹'];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 30; i++) {
         const cash = document.createElement('div');
         cash.className = 'cash-item';
         cash.innerText = items[Math.floor(Math.random() * items.length)];
@@ -173,8 +173,6 @@ function changeLanguage(lang) {
 function changeTheme(themeName) {
     document.body.className = themeName;
     localStorage.setItem('user_theme', themeName);
-    const themeSel = document.getElementById('theme-selector');
-    if (themeSel) themeSel.value = themeName;
 }
 
 const savedTheme = localStorage.getItem('user_theme') || 'theme-slate';
@@ -219,7 +217,7 @@ async function setupDefaultCategoriesForNewUser() {
     }
 }
 
-// 5. EDIT & DELETE CATEGORIES LOGIC
+// 5. EDIT & DELETE CATEGORIES FOR ALL (BOTH DEFAULT & NEWLY ADDED)
 async function editCategory(id, currentName, currentLimit) {
     const newName = prompt("Edit Category Name:", currentName);
     if (!newName) return;
@@ -249,7 +247,7 @@ function openHelpModal() {
     const helpBody = document.getElementById('help-body');
     if (currentLang === 'ta') {
         helpBody.innerHTML = `
-            <ol style="padding-left: 20px; line-height: 1.6; color:#cbd5e1;">
+            <ol style="padding-left: 20px; line-height: 1.8; color:#cbd5e1;">
                 <li><b>பரிவர்த்தனை சேர்க்க:</b> Debit (செலவு) அல்லது Credit (வரவு) பட்டனை தேர்ந்தெடுக்கவும்.</li>
                 <li><b>வகை தேர்வு:</b> பட்டியலிலிருந்து பொருத்தமான வகையை தேர்ந்தெடுக்கவும்.</li>
                 <li><b>சேமிக்க:</b> தொகையை உள்ளிட்டு 'Save Transaction' பட்டனை அழுத்தவும்.</li>
@@ -258,7 +256,7 @@ function openHelpModal() {
         `;
     } else {
         helpBody.innerHTML = `
-            <ol style="padding-left: 20px; line-height: 1.6; color:#cbd5e1;">
+            <ol style="padding-left: 20px; line-height: 1.8; color:#cbd5e1;">
                 <li><b>Add Entry:</b> Select Debit (Expense) or Credit (Income).</li>
                 <li><b>Category:</b> Choose a category from the grid.</li>
                 <li><b>Save:</b> Enter the amount & date, then click 'Save Transaction'.</li>
@@ -434,12 +432,12 @@ function selectType(type) {
 
     if (type === 'expense') {
         categories.forEach(c => {
-            catGrid.innerHTML += `<button type="button" class="btn-cat-chip" onclick="selectCategory('${c.category_name}', this)">${c.category_name}</button>`;
+            catGrid.innerHTML += `<button type="button" class="btn-cat-chip glow-btn" onclick="selectCategory('${c.category_name}', this)">${c.category_name}</button>`;
         });
     } else {
         const incomeSources = ['💰 Salary', '🎁 Bonus', '💻 Freelance', '🏷️ Cashback', '➕ Other Income'];
         incomeSources.forEach(src => {
-            catGrid.innerHTML += `<button type="button" class="btn-cat-chip" onclick="selectCategory('${src}', this)">${src}</button>`;
+            catGrid.innerHTML += `<button type="button" class="btn-cat-chip glow-btn" onclick="selectCategory('${src}', this)">${src}</button>`;
         });
     }
 
@@ -549,8 +547,8 @@ async function loadDashboard() {
                 <div class="budget-header">
                     <strong>${c.category_name}</strong>
                     <div class="budget-actions">
-                        <button type="button" onclick="editCategory(${c.id}, '${c.category_name}', ${c.monthly_limit})">✏️</button>
-                        <button type="button" onclick="deleteCategory(${c.id})">🗑️</button>
+                        <button type="button" class="glow-btn" onclick="editCategory(${c.id}, '${c.category_name}', ${c.monthly_limit})">✏️</button>
+                        <button type="button" class="glow-btn" onclick="deleteCategory(${c.id})">🗑️</button>
                     </div>
                 </div>
                 <span>Limit: ₹${c.monthly_limit}</span>
