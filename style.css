@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.25s ease-in-out;
 }
 
 body {
@@ -24,7 +25,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 15px;
-    border-bottom: 1px solid #334155;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 15px;
 }
 
@@ -41,7 +42,8 @@ body {
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 15px;
-    border: 1px solid #334155;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 h3 {
@@ -88,13 +90,20 @@ input, select, button {
     margin-bottom: 15px;
 }
 
+.bottom-help-container {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
 .btn-help {
-    background-color: #0284c7;
-    width: auto;
-    padding: 6px 14px;
-    font-size: 12px;
-    float: right;
-    margin-bottom: 10px;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
 }
 
 .page-view {
@@ -208,7 +217,26 @@ input, select, button {
     padding: 2px;
 }
 
-/* SPLASH SCREEN & CASH ANIMATION */
+/* 12 GLOW THEME BUTTONS GRID */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.glow-btn, .theme-btn {
+    position: relative;
+    cursor: pointer;
+}
+
+.glow-btn:hover, .theme-btn:hover {
+    box-shadow: 0 0 15px var(--glow-color, #38bdf8);
+    transform: translateY(-2px);
+    border-color: var(--glow-color, #38bdf8);
+}
+
+/* SPLASH SCREEN & CASH ANIMATION ENHANCEMENT */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -226,16 +254,20 @@ input, select, button {
 }
 
 .splash-title {
-    font-size: 28px;
+    font-size: 26px;
     color: #38bdf8;
     animation: fadeIn 1s ease-in-out forwards;
 }
 
 .splash-welcome {
-    font-size: 20px;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 2px;
     color: #10b981;
     opacity: 0;
-    margin-top: 10px;
+    margin-top: 12px;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
     animation: slideUp 1s ease-in-out 1s forwards;
 }
 
@@ -248,7 +280,7 @@ input, select, button {
 .cash-item {
     position: absolute;
     top: -50px;
-    font-size: 24px;
+    font-size: 26px;
     animation: fall linear infinite;
 }
 
@@ -258,7 +290,7 @@ input, select, button {
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(25px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -271,7 +303,7 @@ input, select, button {
     display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.8);
     z-index: 8888;
     justify-content: center;
     align-items: center;
@@ -283,13 +315,31 @@ input, select, button {
     border-radius: 12px;
     width: 90%;
     max-width: 400px;
-    border: 1px solid #334155;
+    border: 1px solid #38bdf8;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
 }
 
-/* THEMES */
-body.theme-emerald { background-color: #064e3b; }
+/* 12 THEMES GLOW PRESETS */
+body.theme-slate { --glow-color: #38bdf8; background-color: #0f172a; }
+body.theme-emerald { --glow-color: #34d399; background-color: #064e3b; }
 body.theme-emerald .card { background-color: #047857; }
-body.theme-ocean { background-color: #0c4a6e; }
+body.theme-ocean { --glow-color: #0284c7; background-color: #0c4a6e; }
 body.theme-ocean .card { background-color: #0369a1; }
-body.theme-purple { background-color: #3b0764; }
+body.theme-purple { --glow-color: #c084fc; background-color: #3b0764; }
 body.theme-purple .card { background-color: #6b21a8; }
+body.theme-crimson { --glow-color: #f87171; background-color: #450a0a; }
+body.theme-crimson .card { background-color: #991b1b; }
+body.theme-sunset { --glow-color: #fb923c; background-color: #431407; }
+body.theme-sunset .card { background-color: #9a3412; }
+body.theme-cyberpunk { --glow-color: #f43f5e; background-color: #180420; }
+body.theme-cyberpunk .card { background-color: #300a38; }
+body.theme-midnight { --glow-color: #818cf8; background-color: #020617; }
+body.theme-midnight .card { background-color: #1e1b4b; }
+body.theme-forest { --glow-color: #a3e635; background-color: #14532d; }
+body.theme-forest .card { background-color: #166534; }
+body.theme-neon { --glow-color: #22d3ee; background-color: #083344; }
+body.theme-neon .card { background-color: #155e75; }
+body.theme-gold { --glow-color: #facc15; background-color: #422006; }
+body.theme-gold .card { background-color: #713f12; }
+body.theme-rose { --glow-color: #f472b6; background-color: #4c0519; }
+body.theme-rose .card { background-color: #831843; }
