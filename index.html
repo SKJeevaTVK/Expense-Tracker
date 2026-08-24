@@ -15,7 +15,7 @@
         <div class="cash-container" id="cash-container"></div>
         <div class="splash-content">
             <h1 class="splash-title">Expense Tracker</h1>
-            <h2 class="splash-welcome">Welcome</h2>
+            <h2 class="splash-welcome">WELCOME</h2>
         </div>
     </div>
 
@@ -39,9 +39,9 @@
                     <input type="password" id="auth-password" placeholder="Password" required>
                     <input type="password" id="auth-confirm-password" placeholder="Confirm Password" style="display:none;">
                     
-                    <button type="submit" class="btn-primary" id="btn-auth-submit" data-i18n="btn_login">Login</button>
+                    <button type="submit" class="btn-primary glow-btn" id="btn-auth-submit" data-i18n="btn_login">Login</button>
                 </form>
-                <button type="button" class="btn-google" onclick="handleGoogleLogin()" data-i18n="btn_google">Continue with Google</button>
+                <button type="button" class="btn-google glow-btn" onclick="handleGoogleLogin()" data-i18n="btn_google">Continue with Google</button>
                 
                 <div class="auth-links">
                     <a href="javascript:void(0)" id="link-signup" onclick="toggleAuthMode('signup')" data-i18n="link_signup">Don't have an account? Sign Up</a>
@@ -53,18 +53,14 @@
 
         <!-- 2. DASHBOARD PAGE -->
         <div id="page-dashboard" class="page-view">
-            <div class="top-bar-actions">
-                <button type="button" class="btn-help" onclick="openHelpModal()">❓ <span data-i18n="btn_how_to_use">How to Use</span></button>
-            </div>
-
             <!-- ADD TRANSACTION ENTRY CARD -->
             <div class="card">
                 <h3 data-i18n="add_entry_title">Add Entry</h3>
                 
                 <label data-i18n="step1_label">1. Select Transaction Type</label>
                 <div class="type-selector">
-                    <button type="button" id="btn-debit" onclick="selectType('expense')" data-i18n="btn_debit">🔴 Debit (Expense)</button>
-                    <button type="button" id="btn-credit" onclick="selectType('income')" data-i18n="btn_credit">🟢 Credit (Income)</button>
+                    <button type="button" id="btn-debit" class="glow-btn" onclick="selectType('expense')" data-i18n="btn_debit">🔴 Debit (Expense)</button>
+                    <button type="button" id="btn-credit" class="glow-btn" onclick="selectType('income')" data-i18n="btn_credit">🟢 Credit (Income)</button>
                 </div>
 
                 <div id="step-category" class="step-container">
@@ -79,7 +75,7 @@
                     <label data-i18n="step3_label">3. Enter Date & Amount (₹)</label>
                     <input type="date" id="entry-date">
                     <input type="number" id="amount" placeholder="Amount (₹)">
-                    <button type="button" class="btn-primary" onclick="addTransaction()" data-i18n="btn_save_tx">💾 Save Transaction</button>
+                    <button type="button" class="btn-primary glow-btn" onclick="addTransaction()" data-i18n="btn_save_tx">💾 Save Transaction</button>
                 </div>
             </div>
 
@@ -97,15 +93,20 @@
                 <canvas id="expenseChart" style="margin-top:15px;"></canvas>
 
                 <div class="nav-links">
-                    <button type="button" class="btn-secondary" onclick="showPage('page-history')" data-i18n="nav_history">📜 View Detailed History Page</button>
-                    <button type="button" class="btn-secondary" onclick="showPage('page-categories')" data-i18n="nav_categories">🏷️ Manage Category Allowances Page</button>
+                    <button type="button" class="btn-secondary glow-btn" onclick="showPage('page-history')" data-i18n="nav_history">📜 View Detailed History Page</button>
+                    <button type="button" class="btn-secondary glow-btn" onclick="showPage('page-categories')" data-i18n="nav_categories">🏷️ Manage Category Allowances Page</button>
                 </div>
+            </div>
+
+            <!-- BOTTOM PLACED HOW TO USE BUTTON -->
+            <div class="bottom-help-container">
+                <button type="button" class="btn-help glow-btn" onclick="openHelpModal()">❓ <span data-i18n="btn_how_to_use">How to Use App Guide</span></button>
             </div>
         </div>
 
         <!-- 3. HISTORY PAGE -->
         <div id="page-history" class="page-view">
-            <button type="button" class="btn-back" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
+            <button type="button" class="btn-back glow-btn" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
             <div class="card">
                 <h3 data-i18n="tx_history_title">Transaction History</h3>
                 <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
@@ -126,7 +127,7 @@
 
         <!-- 4. CATEGORIES PAGE -->
         <div id="page-categories" class="page-view">
-            <button type="button" class="btn-back" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
+            <button type="button" class="btn-back glow-btn" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
             
             <div class="card">
                 <h3 data-i18n="allowance_overview_title">Total Monthly Allowance Overview</h3>
@@ -146,13 +147,13 @@
                 <h3 data-i18n="add_new_cat_title">Add New Allowance Category</h3>
                 <input type="text" id="new-cat-name" placeholder="Category Name (e.g., 🍕 Snacks)">
                 <input type="number" id="new-cat-limit" placeholder="Monthly Limit (₹)">
-                <button type="button" class="btn-primary" onclick="addCategory()" data-i18n="btn_add_cat">+ Add Category</button>
+                <button type="button" class="btn-primary glow-btn" onclick="addCategory()" data-i18n="btn_add_cat">+ Add Category</button>
             </div>
         </div>
 
         <!-- 5. SETTINGS PAGE -->
         <div id="page-settings" class="page-view">
-            <button type="button" class="btn-back" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
+            <button type="button" class="btn-back glow-btn" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
             
             <div class="card">
                 <h3 data-i18n="lang_settings_title">🌐 Language / மொழி</h3>
@@ -163,26 +164,32 @@
             </div>
 
             <div class="card">
-                <h3 data-i18n="theme_settings_title">🎨 App Theme</h3>
-                <select id="theme-selector" onchange="changeTheme(this.value)">
-                    <option value="theme-slate">Slate Dark</option>
-                    <option value="theme-emerald">Emerald Green</option>
-                    <option value="theme-ocean">Ocean Blue</option>
-                    <option value="theme-purple">Royal Purple</option>
-                    <option value="theme-crimson">Crimson Red</option>
-                    <option value="theme-sunset">Sunset Orange</option>
-                </select>
+                <h3 data-i18n="theme_settings_title">🎨 App Theme (12 Variations)</h3>
+                <div class="theme-grid" id="theme-grid">
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-slate')">Slate</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-emerald')">Emerald</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-ocean')">Ocean</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-purple')">Purple</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-crimson')">Crimson</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-sunset')">Sunset</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-cyberpunk')">Cyberpunk</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-midnight')">Midnight</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-forest')">Forest</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-neon')">Neon</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-gold')">Gold</button>
+                    <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-rose')">Rose</button>
+                </div>
             </div>
 
             <div class="card">
                 <h3 data-i18n="security_title">🔒 Security</h3>
-                <button type="button" class="btn-secondary" onclick="showPage('page-change-password')" data-i18n="btn_go_to_change_pass">🔑 Change Password</button>
+                <button type="button" class="btn-secondary glow-btn" onclick="showPage('page-change-password')" data-i18n="btn_go_to_change_pass">🔑 Change Password</button>
             </div>
         </div>
 
         <!-- 6. SEPARATE CHANGE PASSWORD PAGE -->
         <div id="page-change-password" class="page-view">
-            <button type="button" class="btn-back" onclick="showPage('page-settings')" data-i18n="btn_back_to_settings">⬅️ Back to Settings</button>
+            <button type="button" class="btn-back glow-btn" onclick="showPage('page-settings')" data-i18n="btn_back_to_settings">⬅️ Back to Settings</button>
             
             <div class="card">
                 <h3 data-i18n="change_pass_title">🔒 Change Password</h3>
@@ -196,7 +203,7 @@
                     <label data-i18n="confirm_new_pass_label">Confirm New Password</label>
                     <input type="password" id="confirm-new-password" required>
 
-                    <button type="submit" class="btn-primary" data-i18n="btn_update_pass">Update Password</button>
+                    <button type="submit" class="btn-primary glow-btn" data-i18n="btn_update_pass">Update Password</button>
                 </form>
             </div>
         </div>
@@ -208,7 +215,7 @@
         <div class="modal-content">
             <h3 data-i18n="help_title">📖 How to Use</h3>
             <div id="help-body"></div>
-            <button type="button" class="btn-primary" onclick="closeHelpModal()" data-i18n="btn_close">Close</button>
+            <button type="button" class="btn-primary glow-btn" onclick="closeHelpModal()" data-i18n="btn_close">Close</button>
         </div>
     </div>
 
