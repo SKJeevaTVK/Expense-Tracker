@@ -3,115 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for Modern UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js for Visual Graphs -->
+    <title>Smart Expense & Budget Tracker</title>
+    <!-- External SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <h1>💰 Expense Tracker</h1>
-            <button id="themeToggle" class="btn-theme" title="Toggle Dark/Light Mode">🌙</button>
-        </header>
+<body class="theme-slate">
 
-        <!-- Summary Cards -->
-        <section class="summary-cards">
-            <div class="card income">
-                <span>Total Income</span>
-                <h2 id="totalIncome">₹0.00</h2>
-            </div>
-            <div class="card expense">
-                <span>Total Expense</span>
-                <h2 id="totalExpense">₹0.00</h2>
-            </div>
-            <div class="card balance">
-                <span>Net Balance</span>
-                <h2 id="netBalance">₹0.00</h2>
-            </div>
-        </section>
+<!-- 3 SECONDS INTRO SPLASH ANIMATION -->
+<div id="splash-screen">
+    <div class="splash-logo">⚡ Budget Tracker</div>
+    <div class="splash-sub">Smart Expense Management</div>
+</div>
 
-        <!-- Add Transaction Form -->
-        <section class="card form-section">
-            <h3>➕ Add New Transaction</h3>
-            <form id="transactionForm">
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label for="desc">Description</label>
-                        <input type="text" id="desc" placeholder="e.g., Dinner, Petrol, Salary" required>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="amount">Amount (₹)</label>
-                        <input type="number" id="amount" placeholder="0.00" step="0.01" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="type">Type</label>
-                        <select id="type">
-                            <option value="expense">Expense 🔴</option>
-                            <option value="income">Income 🟢</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="category">Category</label>
-                        <select id="category">
-                            <option value="Food">🍔 Food</option>
-                            <option value="Travel">🚗 Travel</option>
-                            <option value="Bills">💡 Bills</option>
-                            <option value="Shopping">🛍️ Shopping</option>
-                            <option value="Salary">💼 Salary</option>
-                            <option value="Udhaar">🤝 Udhaar / Debt</option>
-                            <option value="Others">📦 Others</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="tag">Need vs Want</label>
-                        <select id="tag">
-                            <option value="Need">📌 Need (அவசியம்)</option>
-                            <option value="Want">🎯 Want (ஆசை)</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="date">Date</label>
-                        <input type="date" id="date" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Add Transaction</button>
-            </form>
-        </section>
-
-        <!-- Analytics & Visualization -->
-        <section class="card chart-section">
-            <h3>📊 Category Analytics</h3>
-            <div class="chart-container">
-                <canvas id="expenseChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Transactions History & Filters -->
-        <section class="card history-section">
-            <div class="history-header">
-                <h3>📜 Recent Transactions</h3>
-                <div class="actions">
-                    <input type="text" id="searchInput" placeholder="Search entries..." class="search-box">
-                    <button id="exportBtn" class="btn-export">📥 Export CSV</button>
-                </div>
-            </div>
-
-            <ul id="transactionList" class="transaction-list">
-                <!-- Dynamic Items Inserted via JS -->
-            </ul>
-        </section>
+<div class="container">
+    <div class="top-bar">
+        <h2>Budget Tracker</h2>
+        <div class="header-actions">
+            <!-- 10 THEMES SELECTOR -->
+            <select class="theme-select" id="theme-selector" onchange="changeTheme(this.value)">
+                <option value="theme-slate">🌑 Dark Slate</option>
+                <option value="theme-cyberpunk">🔮 Cyberpunk Neon</option>
+                <option value="theme-emerald">🌲 Emerald Green</option>
+                <option value="theme-sunset">🌅 Sunset Orange</option>
+                <option value="theme-purple">🔮 Royal Purple</option>
+                <option value="theme-ocean">🌊 Ocean Breeze</option>
+                <option value="theme-rosegold">🌸 Rose Gold</option>
+                <option value="theme-coffee">☕ Coffee Warmth</option>
+                <option value="theme-crimson">🍷 Crimson Red</option>
+                <option value="theme-midnight">🌃 Midnight Blue</option>
+            </select>
+            <button type="button" class="btn-sm btn-logout" id="btn-logout" onclick="handleLogout()" style="display:none;">Logout</button>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- PAGE 0: AUTHENTICATION -->
+    <div id="page-auth" class="page-view active">
+        <div class="card" style="max-width: 420px; margin: 0 auto;">
+            <h3 id="auth-title">Login to Your Account</h3>
+            
+            <form onsubmit="handleAuthSubmit(event)">
+                <input type="email" id="auth-email" placeholder="Email Address" required>
+                <input type="password" id="auth-password" placeholder="Password">
+                
+                <!-- RE-ENTER PASSWORD FOR SIGN UP -->
+                <input type="password" id="auth-confirm-password" placeholder="Re-enter Password" style="display:none;">
+                
+                <button type="submit" id="btn-auth-submit">Login</button>
+            </form>
+
+            <div class="divider"><span>OR</span></div>
+
+            <button type="button" class="btn-google" onclick="handleGoogleLogin()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Continue with Google
+            </button>
+            
+            <button type="button" class="auth-toggle" onclick="toggleAuthMode('signup')" id="link-signup">Don't have an account? Sign Up</button>
+            <button type="button" class="auth-toggle" onclick="toggleAuthMode('forgot')" id="link-forgot">Forgot Password?</button>
+            <button type="button" class="auth-toggle" onclick="toggleAuthMode('login')" id="link-login" style="display:none;">Back to Login</button>
+        </div>
+    </div>
+
+    <!-- PAGE 1: MAIN DASHBOARD -->
+    <div id="page-dashboard" class="page-view">
+        <div class="desktop-grid">
+            <div class="card">
+                <h3>Add Entry</h3>
+                
+                <label>1. Select Transaction Type</label>
+                <div class="type-toggle-grid">
+                    <button type="button" class="btn-type-debit" id="btn-debit" onclick="selectType('expense')">🔴 Debit (Expense)</button>
+                    <button type="button" class="btn-type-credit" id="btn-credit" onclick="selectType('income')">🟢 Credit (Income)</button>
+                </div>
+
+                <div id="step-category" class="step-container">
+                    <label>2. Select Category / Description</label>
+                    <div id="category-buttons-grid" class="cat-chip-grid"></div>
+                    <div id="custom-cat-container" style="display:none; margin-top:-5px;">
+                        <input type="text" id="custom-cat-input" placeholder="Enter Description">
+                    </div>
+                </div>
+
+                <div id="step-amount" class="step-container">
+                    <label>3. Enter Date & Amount (₹)</label>
+                    <input type="date" id="entry-date">
+                    <input type="number" id="amount" placeholder="Amount (e.g. 500)">
+                    <button type="button" onclick="addTransaction()">💾 Save Transaction</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <label>Select Month History:</label>
+                <select id="month-filter-dash" onchange="syncMonthAndLoad('dash')"></select>
+                
+                <div class="overview-grid">
+                    <div class="overview-box">
+                        <span>Income</span>
+                        <strong style="color: #4ade80;" id="sum-income">₹0</strong>
+                    </div>
+                    <div class="overview-box">
+                        <span>Expense</span>
+                        <strong style="color: #f87171;" id="sum-expense">₹0</strong>
+                    </div>
+                    <div class="overview-box">
+                        <span>Balance</span>
+                        <strong style="color: #38bdf8;" id="sum-balance">₹0</strong>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+
+            <div class="desktop-full">
+                <button type="button" class="btn-nav" onclick="showPage('page-history')">📜 View Detailed History Page</button>
+                <button type="button" class="btn-nav" onclick="showPage('page-categories')">🏷️ Manage Category Allowances Page</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: HISTORY PAGE -->
+    <div id="page-history" class="page-view">
+        <button type="button" class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
+
+        <div class="card">
+            <label>Select Month History:</label>
+            <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
+        </div>
+
+        <div class="card">
+            <h3>Transaction History</h3>
+            <input type="text" id="search-input" placeholder="🔍 Search Category or Amount..." onkeyup="renderHistory()" style="margin-bottom: 10px;">
+
+            <div class="filter-group">
+                <div>
+                    <label>Type Filter</label>
+                    <select id="filter-type" onchange="renderHistory()">
+                        <option value="all">All Transactions</option>
+                        <option value="income">Credit Only</option>
+                        <option value="expense">Debit Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Category Filter</label>
+                    <select id="filter-category" onchange="renderHistory()"></select>
+                </div>
+            </div>
+            <div id="transaction-list">Loading...</div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: CATEGORY ALLOWANCES PAGE -->
+    <div id="page-categories" class="page-view">
+        <button type="button" class="btn-home" onclick="showPage('page-dashboard')">🏠 Go to Dashboard</button>
+
+        <div class="card">
+            <h3>Total Monthly Allowance Overview</h3>
+            <div class="overview-grid">
+                <div class="overview-box">
+                    <span>Limit</span>
+                    <strong style="color: #38bdf8;" id="tot-budget-limit">₹0</strong>
+                </div>
+                <div class="overview-box">
+                    <span>Spent</span>
+                    <strong style="color: #f87171;" id="tot-budget-spent">₹0</strong>
+                </div>
+                <div class="overview-box">
+                    <span>Left</span>
+                    <strong style="color: #4ade80;" id="tot-budget-left">₹0</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Category Allowances & Balances</h3>
+            <div id="budget-list" class="category-grid">Loading Budgets...</div>
+        </div>
+
+        <div class="card">
+            <h3>Add New Allowance Category</h3>
+            <label>Category Name</label>
+            <input type="text" id="new-cat-name" placeholder="Name (e.g. Snacks)">
+            <label>Monthly Limit (₹)</label>
+            <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 1000)">
+            <button type="button" onclick="addCategory()">+ Add Category</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
