@@ -3,235 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Expense & Budget Tracker</title>
+    <title>Expense Tracker App</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-slate">
 
-<!-- 3 SECONDS INTRO SPLASH ANIMATION -->
-<div id="splash-screen">
-    <div class="splash-logo">⚡ Budget Tracker</div>
-    <div class="splash-sub">Smart Expense Management</div>
-</div>
-
-<div class="container">
-    <div class="top-bar">
-        <h2>Budget Tracker</h2>
-        <div class="header-actions">
-            <!-- GEAR EMOJI FOR SETTINGS -->
-            <button type="button" class="btn-sm btn-icon" id="btn-settings" onclick="showPage('page-settings')" style="display:none;" title="Settings">⚙️</button>
-            <button type="button" class="btn-sm btn-logout" id="btn-logout" onclick="handleLogout()" style="display:none;">Logout</button>
+    <!-- SPLASH SCREEN WITH CASH/COINS ANIMATION -->
+    <div id="splash-screen">
+        <div class="cash-container" id="cash-container"></div>
+        <div class="splash-content">
+            <h1 class="splash-title">Expense Tracker</h1>
+            <h2 class="splash-welcome">Welcome</h2>
         </div>
     </div>
 
-    <!-- PAGE 0: AUTHENTICATION -->
-    <div id="page-auth" class="page-view active">
-        <div class="card" style="max-width: 420px; margin: 0 auto;">
-            <h3 id="auth-title" data-i18n="auth_login_title">Login to Your Account</h3>
-            
-            <form onsubmit="handleAuthSubmit(event)">
-                <input type="email" id="auth-email" placeholder="Email Address" required>
-                <input type="password" id="auth-password" placeholder="Password">
-                <input type="password" id="auth-confirm-password" placeholder="Re-enter Password" style="display:none;">
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <h2>Expense Tracker</h2>
+            <div>
+                <button type="button" id="btn-settings" class="icon-btn" onclick="showPage('page-settings')" style="display:none;">⚙️</button>
+                <button type="button" id="btn-logout" class="icon-btn" onclick="handleLogout()" style="display:none;">🚪</button>
+            </div>
+        </header>
+
+        <!-- 1. AUTH PAGE -->
+        <div id="page-auth" class="page-view active">
+            <div class="card">
+                <h3 id="auth-title" data-i18n="auth_login_title">Login to Your Account</h3>
+                <form onsubmit="handleAuthSubmit(event)">
+                    <input type="email" id="auth-email" placeholder="Email Address" required>
+                    <input type="password" id="auth-password" placeholder="Password" required>
+                    <input type="password" id="auth-confirm-password" placeholder="Confirm Password" style="display:none;">
+                    
+                    <button type="submit" class="btn-primary" id="btn-auth-submit" data-i18n="btn_login">Login</button>
+                </form>
+                <button type="button" class="btn-google" onclick="handleGoogleLogin()" data-i18n="btn_google">Continue with Google</button>
                 
-                <button type="submit" id="btn-auth-submit" data-i18n="btn_login">Login</button>
-            </form>
-
-            <div class="divider"><span>OR</span></div>
-
-            <button type="button" class="btn-google" onclick="handleGoogleLogin()">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-                <span data-i18n="btn_google">Continue with Google</span>
-            </button>
-            
-            <button type="button" class="auth-toggle" onclick="toggleAuthMode('signup')" id="link-signup" data-i18n="link_signup">Don't have an account? Sign Up</button>
-            <button type="button" class="auth-toggle" onclick="toggleAuthMode('forgot')" id="link-forgot" data-i18n="link_forgot">Forgot Password?</button>
-            <button type="button" class="auth-toggle" onclick="toggleAuthMode('login')" id="link-login" style="display:none;" data-i18n="link_login">Back to Login</button>
+                <div class="auth-links">
+                    <a href="javascript:void(0)" id="link-signup" onclick="toggleAuthMode('signup')" data-i18n="link_signup">Don't have an account? Sign Up</a>
+                    <a href="javascript:void(0)" id="link-forgot" onclick="toggleAuthMode('forgot')" data-i18n="link_forgot">Forgot Password?</a>
+                    <a href="javascript:void(0)" id="link-login" onclick="toggleAuthMode('login')" style="display:none;" data-i18n="link_login">Back to Login</a>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- PAGE 1: MAIN DASHBOARD -->
-    <div id="page-dashboard" class="page-view">
-        <div class="desktop-grid">
+        <!-- 2. DASHBOARD PAGE -->
+        <div id="page-dashboard" class="page-view">
+            <div class="top-bar-actions">
+                <button type="button" class="btn-help" onclick="openHelpModal()">❓ <span data-i18n="btn_how_to_use">How to Use</span></button>
+            </div>
+
+            <!-- ADD TRANSACTION ENTRY CARD -->
             <div class="card">
                 <h3 data-i18n="add_entry_title">Add Entry</h3>
                 
                 <label data-i18n="step1_label">1. Select Transaction Type</label>
-                <div class="type-toggle-grid">
-                    <button type="button" class="btn-type-debit" id="btn-debit" onclick="selectType('expense')" data-i18n="btn_debit">🔴 Debit (Expense)</button>
-                    <button type="button" class="btn-type-credit" id="btn-credit" onclick="selectType('income')" data-i18n="btn_credit">🟢 Credit (Income)</button>
+                <div class="type-selector">
+                    <button type="button" id="btn-debit" onclick="selectType('expense')" data-i18n="btn_debit">🔴 Debit (Expense)</button>
+                    <button type="button" id="btn-credit" onclick="selectType('income')" data-i18n="btn_credit">🟢 Credit (Income)</button>
                 </div>
 
                 <div id="step-category" class="step-container">
                     <label data-i18n="step2_label">2. Select Category / Description</label>
-                    <div id="category-buttons-grid" class="cat-chip-grid"></div>
-                    <div id="custom-cat-container" style="display:none; margin-top:-5px;">
-                        <input type="text" id="custom-cat-input" placeholder="Enter Description">
+                    <div id="category-buttons-grid" class="cat-grid"></div>
+                    <div id="custom-cat-container" style="display:none; margin-top:10px;">
+                        <input type="text" id="custom-cat-input" placeholder="Enter custom income category">
                     </div>
                 </div>
 
                 <div id="step-amount" class="step-container">
                     <label data-i18n="step3_label">3. Enter Date & Amount (₹)</label>
                     <input type="date" id="entry-date">
-                    <input type="number" id="amount" placeholder="Amount (e.g. 500)">
-                    <button type="button" onclick="addTransaction()" data-i18n="btn_save_tx">💾 Save Transaction</button>
+                    <input type="number" id="amount" placeholder="Amount (₹)">
+                    <button type="button" class="btn-primary" onclick="addTransaction()" data-i18n="btn_save_tx">💾 Save Transaction</button>
                 </div>
             </div>
 
+            <!-- SUMMARY CARD -->
             <div class="card">
                 <label data-i18n="select_month_label">Select Month History:</label>
                 <select id="month-filter-dash" onchange="syncMonthAndLoad('dash')"></select>
+
+                <div class="summary-grid">
+                    <div class="sum-box income"><span data-i18n="income_label">Income</span><strong id="sum-income">₹0</strong></div>
+                    <div class="sum-box expense"><span data-i18n="expense_label">Expense</span><strong id="sum-expense">₹0</strong></div>
+                    <div class="sum-box balance"><span data-i18n="balance_label">Balance</span><strong id="sum-balance">₹0</strong></div>
+                </div>
+
+                <canvas id="expenseChart" style="margin-top:15px;"></canvas>
+
+                <div class="nav-links">
+                    <button type="button" class="btn-secondary" onclick="showPage('page-history')" data-i18n="nav_history">📜 View Detailed History Page</button>
+                    <button type="button" class="btn-secondary" onclick="showPage('page-categories')" data-i18n="nav_categories">🏷️ Manage Category Allowances Page</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. HISTORY PAGE -->
+        <div id="page-history" class="page-view">
+            <button type="button" class="btn-back" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
+            <div class="card">
+                <h3 data-i18n="tx_history_title">Transaction History</h3>
+                <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
+                <input type="text" id="search-input" placeholder="Search..." oninput="renderHistory()">
                 
-                <div class="overview-grid">
-                    <div class="overview-box">
-                        <span data-i18n="income_label">Income</span>
-                        <strong style="color: #4ade80;" id="sum-income">₹0</strong>
-                    </div>
-                    <div class="overview-box">
-                        <span data-i18n="expense_label">Expense</span>
-                        <strong style="color: #f87171;" id="sum-expense">₹0</strong>
-                    </div>
-                    <div class="overview-box">
-                        <span data-i18n="balance_label">Balance</span>
-                        <strong style="color: #38bdf8;" id="sum-balance">₹0</strong>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <canvas id="expenseChart"></canvas>
-                </div>
-            </div>
-
-            <div class="desktop-full">
-                <button type="button" class="btn-nav" onclick="showPage('page-history')" data-i18n="nav_history">📜 View Detailed History Page</button>
-                <button type="button" class="btn-nav" onclick="showPage('page-categories')" data-i18n="nav_categories">🏷️ Manage Category Allowances Page</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAGE 2: HISTORY PAGE -->
-    <div id="page-history" class="page-view">
-        <button type="button" class="btn-home" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
-
-        <div class="card">
-            <label data-i18n="select_month_label">Select Month History:</label>
-            <select id="month-filter-hist" onchange="syncMonthAndLoad('hist')"></select>
-        </div>
-
-        <div class="card">
-            <h3 data-i18n="tx_history_title">Transaction History</h3>
-            <input type="text" id="search-input" placeholder="🔍 Search Category or Amount..." onkeyup="renderHistory()" style="margin-bottom: 10px;">
-
-            <div class="filter-group">
-                <div>
-                    <label data-i18n="filter_type_label">Type Filter</label>
+                <div class="filter-row">
                     <select id="filter-type" onchange="renderHistory()">
                         <option value="all" data-i18n="opt_all_tx">All Transactions</option>
                         <option value="income" data-i18n="opt_credit_only">Credit Only</option>
                         <option value="expense" data-i18n="opt_debit_only">Debit Only</option>
                     </select>
-                </div>
-                <div>
-                    <label data-i18n="filter_cat_label">Category Filter</label>
                     <select id="filter-category" onchange="renderHistory()"></select>
                 </div>
-            </div>
-            <div id="transaction-list">Loading...</div>
-        </div>
-    </div>
 
-    <!-- PAGE 3: CATEGORY ALLOWANCES PAGE -->
-    <div id="page-categories" class="page-view">
-        <button type="button" class="btn-home" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
-
-        <div class="card">
-            <h3 data-i18n="allowance_overview_title">Total Monthly Allowance Overview</h3>
-            <div class="overview-grid">
-                <div class="overview-box">
-                    <span data-i18n="limit_label">Limit</span>
-                    <strong style="color: #38bdf8;" id="tot-budget-limit">₹0</strong>
-                </div>
-                <div class="overview-box">
-                    <span data-i18n="spent_label">Spent</span>
-                    <strong style="color: #f87171;" id="tot-budget-spent">₹0</strong>
-                </div>
-                <div class="overview-box">
-                    <span data-i18n="left_label">Left</span>
-                    <strong style="color: #4ade80;" id="tot-budget-left">₹0</strong>
-                </div>
+                <div id="transaction-list"></div>
             </div>
         </div>
 
-        <div class="card">
-            <h3 data-i18n="cat_balances_title">Category Allowances & Balances</h3>
-            <div id="budget-list" class="category-grid">Loading Budgets...</div>
+        <!-- 4. CATEGORIES PAGE -->
+        <div id="page-categories" class="page-view">
+            <button type="button" class="btn-back" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
+            
+            <div class="card">
+                <h3 data-i18n="allowance_overview_title">Total Monthly Allowance Overview</h3>
+                <div class="summary-grid">
+                    <div class="sum-box"><span data-i18n="limit_label">Limit</span><strong id="tot-budget-limit">₹0</strong></div>
+                    <div class="sum-box expense"><span data-i18n="spent_label">Spent</span><strong id="tot-budget-spent">₹0</strong></div>
+                    <div class="sum-box balance"><span data-i18n="left_label">Left</span><strong id="tot-budget-left">₹0</strong></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="cat_balances_title">Category Allowances & Balances</h3>
+                <div id="budget-list"></div>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="add_new_cat_title">Add New Allowance Category</h3>
+                <input type="text" id="new-cat-name" placeholder="Category Name (e.g., 🍕 Snacks)">
+                <input type="number" id="new-cat-limit" placeholder="Monthly Limit (₹)">
+                <button type="button" class="btn-primary" onclick="addCategory()" data-i18n="btn_add_cat">+ Add Category</button>
+            </div>
         </div>
 
-        <div class="card">
-            <h3 data-i18n="add_new_cat_title">Add New Allowance Category</h3>
-            <label data-i18n="cat_name_label">Category Name</label>
-            <input type="text" id="new-cat-name" placeholder="Name (e.g. Snacks)">
-            <label data-i18n="monthly_limit_label">Monthly Limit (₹)</label>
-            <input type="number" id="new-cat-limit" placeholder="Monthly Limit (e.g. 1000)">
-            <button type="button" onclick="addCategory()" data-i18n="btn_add_cat">+ Add Category</button>
+        <!-- 5. SETTINGS PAGE -->
+        <div id="page-settings" class="page-view">
+            <button type="button" class="btn-back" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
+            
+            <div class="card">
+                <h3 data-i18n="lang_settings_title">🌐 Language / மொழி</h3>
+                <select id="language-selector" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="ta">தமிழ் (Tamil)</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="theme_settings_title">🎨 App Theme</h3>
+                <select id="theme-selector" onchange="changeTheme(this.value)">
+                    <option value="theme-slate">Slate Dark</option>
+                    <option value="theme-emerald">Emerald Green</option>
+                    <option value="theme-ocean">Ocean Blue</option>
+                    <option value="theme-purple">Royal Purple</option>
+                    <option value="theme-crimson">Crimson Red</option>
+                    <option value="theme-sunset">Sunset Orange</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="security_title">🔒 Security</h3>
+                <button type="button" class="btn-secondary" onclick="showPage('page-change-password')" data-i18n="btn_go_to_change_pass">🔑 Change Password</button>
+            </div>
+        </div>
+
+        <!-- 6. SEPARATE CHANGE PASSWORD PAGE -->
+        <div id="page-change-password" class="page-view">
+            <button type="button" class="btn-back" onclick="showPage('page-settings')" data-i18n="btn_back_to_settings">⬅️ Back to Settings</button>
+            
+            <div class="card">
+                <h3 data-i18n="change_pass_title">🔒 Change Password</h3>
+                <form onsubmit="handlePasswordChange(event)">
+                    <label data-i18n="old_pass_label">Old Password</label>
+                    <input type="password" id="old-password" required>
+
+                    <label data-i18n="new_pass_label">New Password</label>
+                    <input type="password" id="new-password" required>
+
+                    <label data-i18n="confirm_new_pass_label">Confirm New Password</label>
+                    <input type="password" id="confirm-new-password" required>
+
+                    <button type="submit" class="btn-primary" data-i18n="btn_update_pass">Update Password</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HOW TO USE MODAL POPUP -->
+    <div id="help-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 data-i18n="help_title">📖 How to Use</h3>
+            <div id="help-body"></div>
+            <button type="button" class="btn-primary" onclick="closeHelpModal()" data-i18n="btn_close">Close</button>
         </div>
     </div>
 
-    <!-- PAGE 4: SETTINGS PAGE -->
-    <div id="page-settings" class="page-view">
-        <button type="button" class="btn-home" onclick="showPage('page-dashboard')" data-i18n="nav_dashboard">🏠 Go to Dashboard</button>
-        
-        <!-- 1. LANGUAGE SETTINGS -->
-        <div class="card">
-            <h3 data-i18n="lang_settings_title">🌐 Language / மொழி</h3>
-            <label data-i18n="select_lang_label">Select Application Language:</label>
-            <select id="language-selector" onchange="changeLanguage(this.value)">
-                <option value="en">English</option>
-                <option value="ta">தமிழ் (Tamil)</option>
-            </select>
-        </div>
-
-        <!-- 2. 12 THEME VARIATIONS -->
-        <div class="card">
-            <h3 data-i18n="theme_settings_title">🎨 App Theme (12 Variations)</h3>
-            <label data-i18n="select_theme_label">Choose Visual Style:</label>
-            <select class="theme-select-full" id="theme-selector" onchange="changeTheme(this.value)">
-                <option value="theme-slate">🌑 1. Dark Slate</option>
-                <option value="theme-cyberpunk">🔮 2. Cyberpunk Neon</option>
-                <option value="theme-emerald">🌲 3. Emerald Green</option>
-                <option value="theme-sunset">🌅 4. Sunset Orange</option>
-                <option value="theme-purple">🔮 5. Royal Purple</option>
-                <option value="theme-ocean">🌊 6. Ocean Breeze</option>
-                <option value="theme-rosegold">🌸 7. Rose Gold</option>
-                <option value="theme-coffee">☕ 8. Coffee Warmth</option>
-                <option value="theme-crimson">🍷 9. Crimson Red</option>
-                <option value="theme-midnight">🌃 10. Midnight Blue</option>
-                <option value="theme-neonmint">🌿 11. Neon Mint</option>
-                <option value="theme-gold">👑 12. Gold Luxury</option>
-            </select>
-        </div>
-
-        <!-- 3. CHANGE PASSWORD OPTION -->
-        <div class="card">
-            <h3 data-i18n="change_pass_title">🔒 Change Password</h3>
-            <form onsubmit="handlePasswordChange(event)">
-                <label data-i18n="old_pass_label">Old Password</label>
-                <input type="password" id="old-password" placeholder="Enter Old Password" required>
-
-                <label data-i18n="new_pass_label">New Password</label>
-                <input type="password" id="new-password" placeholder="Enter New Password" required>
-
-                <label data-i18n="confirm_new_pass_label">Confirm New Password</label>
-                <input type="password" id="confirm-new-password" placeholder="Confirm New Password" required>
-
-                <button type="submit" data-i18n="btn_update_pass">Update Password</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
