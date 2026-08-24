@@ -127,7 +127,8 @@ const translations = {
 function changeLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('user_lang', lang);
-    document.getElementById('language-selector').value = lang;
+    const langSel = document.getElementById('language-selector');
+    if (langSel) langSel.value = lang;
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -141,7 +142,8 @@ function changeLanguage(lang) {
 function changeTheme(themeName) {
     document.body.className = themeName;
     localStorage.setItem('user_theme', themeName);
-    document.getElementById('theme-selector').value = themeName;
+    const themeSel = document.getElementById('theme-selector');
+    if (themeSel) themeSel.value = themeName;
 }
 
 // Load Saved Theme and Language on Startup
@@ -151,15 +153,17 @@ changeTheme(savedTheme);
 const savedLang = localStorage.getItem('user_lang') || 'en';
 changeLanguage(savedLang);
 
+// Splash Screen Removal
 setTimeout(() => {
     const splash = document.getElementById('splash-screen');
-    if (splash) splash.style.display = 'none';
+    if (splash) {
+        splash.style.display = 'none';
+    }
 }, 3000);
 
-async function checkUserSession() {
-    if (!db) return;
-    try {
-        const { data: { session } } = await db.auth.getSession();
+// REAL-TIME AUTH STATE OBSERVER (FIXES STUCK LOGIN ISSUE)
+if (db) {
+    db.auth.onAuthStateChange(async (event, session) => {
         if (session) {
             currentUser = session.user;
             document.getElementById('btn-logout').style.display = 'block';
@@ -170,13 +174,12 @@ async function checkUserSession() {
             await loadCategories();
             loadDashboard();
         } else {
+            currentUser = null;
             document.getElementById('btn-logout').style.display = 'none';
             document.getElementById('btn-settings').style.display = 'none';
             showPage('page-auth');
         }
-    } catch(e) {
-        console.error(e);
-    }
+    });
 }
 
 async function setupDefaultCategoriesForNewUser() {
@@ -247,7 +250,7 @@ async function handleAuthSubmit(event) {
         if (authMode === 'login') {
             const { data, error } = await db.auth.signInWithPassword({ email, password });
             if (error) return alert(error.message);
-            checkUserSession();
+            // onAuthStateChange handle பண்ணி Dashboard-க்கு கூட்டிட்டு போகும்
         } else if (authMode === 'signup') {
             if (password !== confirmPassword) {
                 return alert('Error: Password and Re-entered Password do not match!');
@@ -288,7 +291,6 @@ async function handlePasswordChange(event) {
     }
 
     try {
-        // Re-authenticate user with old password
         const { error: signInError } = await db.auth.signInWithPassword({
             email: currentUser.email,
             password: oldPassword
@@ -298,7 +300,6 @@ async function handlePasswordChange(event) {
             return alert("Incorrect Old Password!");
         }
 
-        // Update to new password
         const { error: updateError } = await db.auth.updateUser({ password: newPassword });
 
         if (updateError) {
@@ -318,8 +319,6 @@ async function handlePasswordChange(event) {
 
 async function handleLogout() {
     if (db) await db.auth.signOut();
-    currentUser = null;
-    checkUserSession();
 }
 
 function showPage(pageId) {
@@ -331,6 +330,8 @@ function showPage(pageId) {
 function initMonthDropdowns() {
     const dashSelect = document.getElementById('month-filter-dash');
     const histSelect = document.getElementById('month-filter-hist');
+    if (!dashSelect || !histSelect) return;
+    
     dashSelect.innerHTML = '';
     histSelect.innerHTML = '';
 
@@ -368,6 +369,8 @@ async function loadCategories() {
     categories = data || [];
     
     const catFilter = document.getElementById('filter-category');
+    if (!catFilter) return;
+    
     catFilter.innerHTML = `<option value="all" data-i18n="opt_all_cat">All Categories</option>`;
     categories.forEach(c => {
         catFilter.innerHTML += `<option value="${c.category_name}">${c.category_name}</option>`;
@@ -466,6 +469,7 @@ async function deleteTransaction(id) {
 }
 
 async function loadDashboard() {
+    if (!selectedMonth) return;
     const startDate = `${selectedMonth}-01T00:00:00.000Z`;
     const endDate = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0, 23, 59, 59).toISOString();
 
@@ -569,5 +573,3 @@ function renderHistory() {
         `;
     });
 }
-
-checkUserSession();
