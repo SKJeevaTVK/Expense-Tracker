@@ -17,17 +17,139 @@ let selectedMonth = '';
 let selectedType = null;
 let selectedCategory = null;
 let chartInstance = null;
+let currentLang = 'en';
 
-// 1. THEME SWITCHER FUNCTIONALITY
+// TRANSLATION DICTIONARY (ENGLISH & TAMIL)
+const translations = {
+    en: {
+        auth_login_title: "Login to Your Account",
+        auth_signup_title: "Create New Account",
+        auth_forgot_title: "Reset Password via Email",
+        btn_login: "Login",
+        btn_signup: "Sign Up",
+        btn_reset: "Send Reset Link",
+        btn_google: "Continue with Google",
+        link_signup: "Don't have an account? Sign Up",
+        link_forgot: "Forgot Password?",
+        link_login: "Back to Login",
+        add_entry_title: "Add Entry",
+        step1_label: "1. Select Transaction Type",
+        btn_debit: "🔴 Debit (Expense)",
+        btn_credit: "🟢 Credit (Income)",
+        step2_label: "2. Select Category / Description",
+        step3_label: "3. Enter Date & Amount (₹)",
+        btn_save_tx: "💾 Save Transaction",
+        select_month_label: "Select Month History:",
+        income_label: "Income",
+        expense_label: "Expense",
+        balance_label: "Balance",
+        nav_history: "📜 View Detailed History Page",
+        nav_categories: "🏷️ Manage Category Allowances Page",
+        nav_dashboard: "🏠 Go to Dashboard",
+        tx_history_title: "Transaction History",
+        filter_type_label: "Type Filter",
+        filter_cat_label: "Category Filter",
+        opt_all_tx: "All Transactions",
+        opt_credit_only: "Credit Only",
+        opt_debit_only: "Debit Only",
+        allowance_overview_title: "Total Monthly Allowance Overview",
+        limit_label: "Limit",
+        spent_label: "Spent",
+        left_label: "Left",
+        cat_balances_title: "Category Allowances & Balances",
+        add_new_cat_title: "Add New Allowance Category",
+        cat_name_label: "Category Name",
+        monthly_limit_label: "Monthly Limit (₹)",
+        btn_add_cat: "+ Add Category",
+        lang_settings_title: "🌐 Language / மொழி",
+        select_lang_label: "Select Application Language:",
+        theme_settings_title: "🎨 App Theme (12 Variations)",
+        select_theme_label: "Choose Visual Style:",
+        change_pass_title: "🔒 Change Password",
+        old_pass_label: "Old Password",
+        new_pass_label: "New Password",
+        confirm_new_pass_label: "Confirm New Password",
+        btn_update_pass: "Update Password"
+    },
+    ta: {
+        auth_login_title: "உங்கள் கணக்கில் நுழையவும்",
+        auth_signup_title: "புதிய கணக்கை உருவாக்கவும்",
+        auth_forgot_title: "கடவுச்சொல்லை மீட்டமைக்கவும்",
+        btn_login: "உள்நுழைக (Login)",
+        btn_signup: "பதிவு செய்க (Sign Up)",
+        btn_reset: "மீட்டமைப்பு இணைப்பு அனுப்பு",
+        btn_google: "Google மூலம் தொடரவும்",
+        link_signup: "கணக்கு இல்லையா? பதிவு செய்க",
+        link_forgot: "கடவுச்சொல் மறந்துவிட்டதா?",
+        link_login: "மீண்டும் லாகின் செல்லவும்",
+        add_entry_title: "வரவு/செலவு சேர்க்க",
+        step1_label: "1. பரிவர்த்தனை வகையைத் தேர்ந்தெடுக்கவும்",
+        btn_debit: "🔴 பற்று (செலவு)",
+        btn_credit: "🟢 வரவு (வருமானம்)",
+        step2_label: "2. வகை / விளக்கத்தைத் தேர்ந்தெடுக்கவும்",
+        step3_label: "3. தேதி மற்றும் தொகையை உள்ளிடவும் (₹)",
+        btn_save_tx: "💾 சேமிக்கவும்",
+        select_month_label: "மாத வரலாற்றைத் தேர்ந்தெடுக்கவும்:",
+        income_label: "வருமானம்",
+        expense_label: "செலவு",
+        balance_label: "மீதி",
+        nav_history: "📜 விரிவான வரலாற்றுப் பக்கம்",
+        nav_categories: "🏷️ வகை வரம்புகள் பக்கம்",
+        nav_dashboard: "🏠 முகப்புப் பக்கத்திற்குச் செல்",
+        tx_history_title: "பரிவர்த்தனை வரலாறு",
+        filter_type_label: "வகை வடிகட்டி",
+        filter_cat_label: "பிரிவு வடிகட்டி",
+        opt_all_tx: "எல்லா பரிவர்த்தனைகளும்",
+        opt_credit_only: "வரவு மட்டும்",
+        opt_debit_only: "செலவு மட்டும்",
+        allowance_overview_title: "மாதாந்திர மொத்த வரம்பு மேலோட்டம்",
+        limit_label: "வரம்பு",
+        spent_label: "செலவழித்தது",
+        left_label: "மீதமுள்ளது",
+        cat_balances_title: "வகை வரம்புகள் மற்றும் இருப்புகள்",
+        add_new_cat_title: "புதிய செலவு வரம்பை சேர்க்க",
+        cat_name_label: "வகை பெயர்",
+        monthly_limit_label: "மாதாந்திர வரம்பு (₹)",
+        btn_add_cat: "+ வகையைச் சேர்க்கவும்",
+        lang_settings_title: "🌐 Language / மொழி",
+        select_lang_label: "பயன்பாட்டு மொழியைத் தேர்ந்தெடுக்கவும்:",
+        theme_settings_title: "🎨 பயன்பாட்டு தீம் (12 விருப்பங்கள்)",
+        select_theme_label: "வடிவமைப்பைத் தேர்ந்தெடுக்கவும்:",
+        change_pass_title: "🔒 கடவுச்சொல்லை மாற்றவும்",
+        old_pass_label: "பழைய கடவுச்சொல்",
+        new_pass_label: "புதிய கடவுச்சொல்",
+        confirm_new_pass_label: "புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்",
+        btn_update_pass: "கடவுச்சொல்லை புதுப்பிக்கவும்"
+    }
+};
+
+// 1. LANGUAGE SWITCHER FUNCTIONALITY
+function changeLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('user_lang', lang);
+    document.getElementById('language-selector').value = lang;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            el.innerText = translations[lang][key];
+        }
+    });
+}
+
+// 2. THEME SWITCHER FUNCTIONALITY (12 THEMES)
 function changeTheme(themeName) {
     document.body.className = themeName;
     localStorage.setItem('user_theme', themeName);
     document.getElementById('theme-selector').value = themeName;
 }
 
-// Load Saved Theme on Startup
+// Load Saved Theme and Language on Startup
 const savedTheme = localStorage.getItem('user_theme') || 'theme-slate';
 changeTheme(savedTheme);
+
+const savedLang = localStorage.getItem('user_lang') || 'en';
+changeLanguage(savedLang);
 
 setTimeout(() => {
     const splash = document.getElementById('splash-screen');
@@ -41,6 +163,7 @@ async function checkUserSession() {
         if (session) {
             currentUser = session.user;
             document.getElementById('btn-logout').style.display = 'block';
+            document.getElementById('btn-settings').style.display = 'block';
             showPage('page-dashboard');
             initMonthDropdowns();
             await setupDefaultCategoriesForNewUser();
@@ -48,6 +171,7 @@ async function checkUserSession() {
             loadDashboard();
         } else {
             document.getElementById('btn-logout').style.display = 'none';
+            document.getElementById('btn-settings').style.display = 'none';
             showPage('page-auth');
         }
     } catch(e) {
@@ -55,7 +179,6 @@ async function checkUserSession() {
     }
 }
 
-// 2. NEW USER DEFAULT CATEGORIES ONBOARDING
 async function setupDefaultCategoriesForNewUser() {
     if (!currentUser) return;
     
@@ -86,35 +209,29 @@ function toggleAuthMode(mode) {
     authMode = mode;
     const passwordInput = document.getElementById('auth-password');
     const confirmPasswordInput = document.getElementById('auth-confirm-password');
-    const submitBtn = document.getElementById('btn-auth-submit');
-    const title = document.getElementById('auth-title');
 
     document.getElementById('link-signup').style.display = mode === 'login' ? 'block' : 'none';
     document.getElementById('link-forgot').style.display = mode === 'login' ? 'block' : 'none';
     document.getElementById('link-login').style.display = mode !== 'login' ? 'block' : 'none';
 
     if (mode === 'login') {
-        title.innerText = 'Login to Your Account';
-        submitBtn.innerText = 'Login';
         passwordInput.style.display = 'block';
         passwordInput.required = true;
         confirmPasswordInput.style.display = 'none';
         confirmPasswordInput.required = false;
     } else if (mode === 'signup') {
-        title.innerText = 'Create New Account';
-        submitBtn.innerText = 'Sign Up';
         passwordInput.style.display = 'block';
         passwordInput.required = true;
         confirmPasswordInput.style.display = 'block';
         confirmPasswordInput.required = true;
     } else if (mode === 'forgot') {
-        title.innerText = 'Reset Password via Email';
-        submitBtn.innerText = 'Send Reset Link';
         passwordInput.style.display = 'none';
         passwordInput.required = false;
         confirmPasswordInput.style.display = 'none';
         confirmPasswordInput.required = false;
     }
+
+    changeLanguage(currentLang);
 }
 
 async function handleAuthSubmit(event) {
@@ -151,6 +268,51 @@ async function handleAuthSubmit(event) {
         }
     } catch(err) {
         alert("Error: " + err.message);
+    }
+}
+
+// 3. CHANGE PASSWORD LOGIC
+async function handlePasswordChange(event) {
+    event.preventDefault();
+
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+    if (newPassword !== confirmNewPassword) {
+        return alert("New password and confirm password do not match!");
+    }
+
+    if (newPassword.length < 6) {
+        return alert("Password must be at least 6 characters long!");
+    }
+
+    try {
+        // Re-authenticate user with old password
+        const { error: signInError } = await db.auth.signInWithPassword({
+            email: currentUser.email,
+            password: oldPassword
+        });
+
+        if (signInError) {
+            return alert("Incorrect Old Password!");
+        }
+
+        // Update to new password
+        const { error: updateError } = await db.auth.updateUser({ password: newPassword });
+
+        if (updateError) {
+            return alert(updateError.message);
+        }
+
+        alert("Password updated successfully!");
+        document.getElementById('old-password').value = '';
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-new-password').value = '';
+        showPage('page-dashboard');
+
+    } catch (err) {
+        alert("Error updating password: " + err.message);
     }
 }
 
@@ -206,7 +368,7 @@ async function loadCategories() {
     categories = data || [];
     
     const catFilter = document.getElementById('filter-category');
-    catFilter.innerHTML = `<option value="all">All Categories</option>`;
+    catFilter.innerHTML = `<option value="all" data-i18n="opt_all_cat">All Categories</option>`;
     categories.forEach(c => {
         catFilter.innerHTML += `<option value="${c.category_name}">${c.category_name}</option>`;
     });
@@ -367,7 +529,7 @@ function renderChart(labels, data) {
 
     chartInstance = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#a78bfa'] }] },
+        data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#38bdf8', '#f59e0b', '#10b981', '#a78bfa', '#00e676', '#ffd700'] }] },
         options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } } } }
     });
 }
