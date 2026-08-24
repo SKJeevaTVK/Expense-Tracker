@@ -1,1 +1,235 @@
+:root {
+    --bg-color: #f4f6f9;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    
+    --income-color: #10b981;
+    --expense-color: #ef4444;
+    --balance-color: #3b82f6;
+    --primary-btn: #4f46e5;
+    --primary-btn-hover: #4338ca;
+}
 
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 850px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-theme {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Card General Style */
+.card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Summary Grid */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.summary-cards .card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-cards span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.card.income h2 { color: var(--income-color); }
+.card.expense h2 { color: var(--expense-color); }
+.card.balance h2 { color: var(--balance-color); }
+
+/* Form Style */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+input, select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary-btn);
+}
+
+.btn-submit {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-btn);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background: var(--primary-btn-hover);
+}
+
+/* Charts */
+.chart-container {
+    position: relative;
+    max-width: 350px;
+    margin: 15px auto 0 auto;
+}
+
+/* History & Filters */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.search-box {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+.btn-export {
+    background: #059669;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.transaction-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 5px solid transparent;
+    background: var(--bg-color);
+}
+
+.transaction-item.income { border-left-color: var(--income-color); }
+.transaction-item.expense { border-left-color: var(--expense-color); }
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-desc {
+    font-weight: 600;
+}
+
+.item-meta {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    background: var(--border-color);
+    margin-left: 5px;
+}
+
+.item-amount-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-delete {
+    background: transparent;
+    border: none;
+    color: var(--expense-color);
+    cursor: pointer;
+    font-size: 1rem;
+}
