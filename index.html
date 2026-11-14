@@ -26,28 +26,19 @@
             <h2>Expense Tracker</h2>
             <div>
                 <button type="button" id="btn-settings" class="icon-btn" onclick="showPage('page-settings')" style="display:none;">⚙️</button>
-                <button type="button" id="btn-logout" class="icon-btn" onclick="handleLogout()" style="display:none;">🚪</button>
             </div>
         </header>
 
-        <!-- 1. AUTH PAGE -->
+        <!-- 1. AUTH PAGE (Simplified to email/username only without password) -->
         <div id="page-auth" class="page-view active">
             <div class="card">
                 <h3 id="auth-title" data-i18n="auth_login_title">Login to Your Account</h3>
                 <form onsubmit="handleAuthSubmit(event)">
                     <input type="email" id="auth-email" placeholder="Email Address" required>
-                    <input type="password" id="auth-password" placeholder="Password" required>
-                    <input type="password" id="auth-confirm-password" placeholder="Confirm Password" style="display:none;">
                     
                     <button type="submit" class="btn-primary glow-btn" id="btn-auth-submit" data-i18n="btn_login">Login</button>
                 </form>
                 <button type="button" class="btn-google glow-btn" onclick="handleGoogleLogin()" data-i18n="btn_google">Continue with Google</button>
-                
-                <div class="auth-links">
-                    <a href="javascript:void(0)" id="link-signup" onclick="toggleAuthMode('signup')" data-i18n="link_signup">Don't have an account? Sign Up</a>
-                    <a href="javascript:void(0)" id="link-forgot" onclick="toggleAuthMode('forgot')" data-i18n="link_forgot">Forgot Password?</a>
-                    <a href="javascript:void(0)" id="link-login" onclick="toggleAuthMode('login')" style="display:none;" data-i18n="link_login">Back to Login</a>
-                </div>
             </div>
         </div>
 
@@ -179,32 +170,6 @@
                     <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-gold')">Gold</button>
                     <button type="button" class="theme-btn glow-btn" onclick="changeTheme('theme-rose')">Rose</button>
                 </div>
-            </div>
-
-            <div class="card">
-                <h3 data-i18n="security_title">🔒 Security</h3>
-                <button type="button" class="btn-secondary glow-btn" onclick="showPage('page-change-password')" data-i18n="btn_go_to_change_pass">🔑 Change Password</button>
-            </div>
-        </div>
-
-        <!-- 6. SEPARATE CHANGE PASSWORD PAGE -->
-        <div id="page-change-password" class="page-view">
-            <button type="button" class="btn-back glow-btn" onclick="showPage('page-settings')" data-i18n="btn_back_to_settings">⬅️ Back to Settings</button>
-            
-            <div class="card">
-                <h3 data-i18n="change_pass_title">🔒 Change Password</h3>
-                <form onsubmit="handlePasswordChange(event)">
-                    <label data-i18n="old_pass_label">Old Password</label>
-                    <input type="password" id="old-password" required>
-
-                    <label data-i18n="new_pass_label">New Password</label>
-                    <input type="password" id="new-password" required>
-
-                    <label data-i18n="confirm_new_pass_label">Confirm New Password</label>
-                    <input type="password" id="confirm-new-password" required>
-
-                    <button type="submit" class="btn-primary glow-btn" data-i18n="btn_update_pass">Update Password</button>
-                </form>
             </div>
         </div>
 
